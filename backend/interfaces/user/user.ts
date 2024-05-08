@@ -1,3 +1,8 @@
+enum UserRole {
+   Admin = "admin",
+   Customer = "customer"
+}
+
 export interface User {
    userId?: number;
    lastName: string;
@@ -7,4 +12,7 @@ export interface User {
    pinNumber: string;
    token: string;
    isActive: number;
+   userRole: UserRole;
+   loginPasswordExpiration: Date;
+   loginPassword: string;
 }

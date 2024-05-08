@@ -1,4 +1,3 @@
-// src/utils/generateUniqueNumber.ts
 import { randomBytes } from 'crypto';
 
 export const generateUniqueNumber = (): string => {

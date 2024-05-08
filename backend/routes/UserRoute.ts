@@ -1,18 +1,48 @@
 import express from 'express';
+
 import { UserController } from '../controllers/user/UserController';
+import { RoleChecker } from '../middleware/RoleChecker';
+import Validator from '../middleware/Validator';
+import ErrorHandler from '../middleware/ErrorHandler';
 
 const router = express.Router();
 
 const userController = new UserController();
 
-router.post('/create-user', userController.registerUser.bind(userController));
-router.put('/set-pin', userController.setUserPin.bind(userController));
-router.post('/forgot-pin', userController.forgotPin.bind(userController));
-router.put('/reset-pin', userController.resetPin.bind(userController))
-router.post('/login-customer', userController.loginCustomer.bind(userController));
-router.get('/users-list', userController.getUsersList.bind(userController));
-router.get('/:identityId', userController.getUserData.bind(userController));
-router.delete('/delete/:identityId', userController.deleteUser.bind(userController));
-router.put('/edit/:identityId', userController.editUserData.bind(userController));
+const checkValidation = ErrorHandler.validationError;
+
+router.put(
+    '/set-pin',
+    Validator.validatePinNumber(),
+    checkValidation,
+    userController.setUserPin.bind(userController)
+);
+
+router.post(
+    '/login-customer',
+    userController.loginCustomer.bind(userController)
+);
+
+router.post(
+    '/forgot-pin',
+    Validator.validateUserForgotPassword(),
+    checkValidation,
+    userController.forgotPin.bind(userController)
+);
+
+router.put(
+    '/reset-pin',
+    Validator.validateUserResetPin(),
+    checkValidation,
+    userController.resetPin.bind(userController)
+);
+
+router.get(
+    '/:userId',
+    Validator.validateUserId(),
+    checkValidation,
+    RoleChecker.isCustomerOrAdmin,
+    userController.getUserData.bind(userController)
+);
 
 export default router;
