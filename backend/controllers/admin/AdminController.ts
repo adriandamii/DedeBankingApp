@@ -8,15 +8,14 @@ import { loginTokenAdmin } from '../../utils/loginTokenAdmin';
 import { transporter } from '../../utils/mailerService';
 import ErrorHandler from '../../middleware/ErrorHandler';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 
 dotenv.config();
 
 export class AdminController {
     async getUsersList(req: Request, res: Response): Promise<void> {
         const userRole = (req as any).user.userRole;
-
         if (userRole !== 'admin') {
+            console.log("neautorizaat")
             return ErrorHandler.unauthorized(req, res, 'Access denied');
         }
 
@@ -34,62 +33,9 @@ export class AdminController {
         }
     }
 
-    async getAccountsByUserId(req: Request, res: Response): Promise<void> {
-        const userId = req.params.userId;
-        const userRole = (req as any).user.userRole; 
+    
 
-        if (userRole !== 'admin') {
-            return ErrorHandler.unauthorized(
-                req,
-                res,
-                'Access denied: Admins only'
-            );
-        }
-
-        try {
-            const query = 'SELECT * FROM accounts WHERE userId = ?';
-            const [results] = await db.query<RowDataPacket[]>(query, [userId]);
-
-            if (results.length > 0) {
-                res.json(results);
-            } else {
-                return ErrorHandler.notFound(
-                    req,
-                    res,
-                    'No accounts found for this user.'
-                );
-            }
-        } catch (error) {
-            return ErrorHandler.internalError(req, res, error);
-        }
-    }
-
-    async getAccountDetails(req: Request, res: Response): Promise<void> {
-        const userRole = (req as any).user.userRole;
-        if (userRole !== 'admin') {
-            return ErrorHandler.unauthorized(
-                req,
-                res,
-                'Access denied: Admins only'
-            );
-        }
-
-        try {
-            const accountId = req.params.accountId;
-            const query = 'SELECT * FROM accounts WHERE accountId = ?';
-            const [results] = await db.query<RowDataPacket[]>(query, [
-                accountId,
-            ]);
-
-            if (results.length > 0) {
-                res.json(results[0]);
-            } else {
-                return ErrorHandler.notFound(req, res, 'Account not found');
-            }
-        } catch (error) {
-            return ErrorHandler.internalError(req, res, error);
-        }
-    }
+ 
 
     async editUserData(req: Request, res: Response): Promise<void> {
         const userRole = (req as any).user.userRole;

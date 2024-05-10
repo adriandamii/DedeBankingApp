@@ -11,6 +11,7 @@ export const authenticateToken = (
     next: NextFunction
 ): void => {
     const publicRoutes = [
+        '/auth-check',
         '/user/set-pin',
         '/user/login-customer',
         '/user/reset-pin',
@@ -23,21 +24,18 @@ export const authenticateToken = (
     if (publicRoutes.includes(path)) {
         return next();
     }
-    const token = req.headers.authorization?.split(' ')[1];
+
+    const token = req.cookies.token;
     if (!token) {
         return ErrorHandler.unauthorized(req, res, 'Unauthorized access');
     }
 
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-        return ErrorHandler.internalError(
-            req,
-            res,
-            'JWT secret not configured'
-        );
+        return ErrorHandler.internalError(req, res, 'JWT secret not configured');
     }
 
-    jwt.verify(token, secret, (err, decoded) => {
+    jwt.verify(token, secret, (err:any, decoded:any) => {
         if (err) {
             return ErrorHandler.unauthorized(req, res, 'Invalid token');
         }
@@ -46,3 +44,4 @@ export const authenticateToken = (
         next();
     });
 };
+

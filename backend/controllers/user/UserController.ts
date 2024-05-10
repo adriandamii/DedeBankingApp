@@ -1,6 +1,4 @@
 import { Request, Response } from 'express';
-import { UserFactory } from '../../factories/UserFactory';
-import { User } from '../../interfaces/user/user';
 import db from '../../database/config/database';
 import { RowDataPacket } from 'mysql2';
 import jwt from 'jsonwebtoken';
@@ -13,14 +11,11 @@ import ErrorHandler from '../../middleware/ErrorHandler';
 dotenv.config();
 
 export class UserController {
-    
     async getUserData(req: Request, res: Response): Promise<void> {
         try {
-            const { identityId } = req.params;
-            const query = 'SELECT * FROM users WHERE identityId = ?';
-            const [results] = await db.query<RowDataPacket[]>(query, [
-                identityId,
-            ]);
+            const { userId } = req.params;
+            const query = 'SELECT * FROM users WHERE userId = ?';
+            const [results] = await db.query<RowDataPacket[]>(query, [userId]);
 
             if (results.length > 0) {
                 res.json(results[0]);
@@ -31,11 +26,75 @@ export class UserController {
             return ErrorHandler.internalError(req, res, error);
         }
     }
-    
+
+    async getAccountsByUserId(req: Request, res: Response): Promise<void> {
+        const userId = req.params.userId;
+        const requestingUser = (req as any).user;
+
+        if (
+            requestingUser.userRole !== 'admin' &&
+            requestingUser.userId !== userId
+        ) {
+            return ErrorHandler.unauthorized(
+                req,
+                res,
+                'Access denied: You do not have permission to view these accounts.'
+            );
+        }
+
+        try {
+            const query = 'SELECT * FROM accounts WHERE userId = ?';
+            const [results] = await db.query<RowDataPacket[]>(query, [userId]);
+
+            if (results.length > 0) {
+                res.json(results);
+            } else {
+                return ErrorHandler.notFound(
+                    req,
+                    res,
+                    'No accounts found for this user.'
+                );
+            }
+        } catch (error) {
+            return ErrorHandler.internalError(req, res, error);
+        }
+    }
+
+    async getAccountDetails(req: Request, res: Response): Promise<void> {
+        const { userRole, userId } = (req as any).user;
+
+        try {
+            const accountId = req.params.accountId;
+            const accountQuery = 'SELECT * FROM accounts WHERE accountId = ?';
+            const [accountResults] = await db.query<RowDataPacket[]>(
+                accountQuery,
+                [accountId]
+            );
+
+            if (accountResults.length > 0) {
+                const account = accountResults[0];
+
+                if (userRole !== 'admin' && userId !== account.userId) {
+                    return ErrorHandler.unauthorized(
+                        req,
+                        res,
+                        'Access denied: You are neither an admin nor the owner of this account'
+                    );
+                }
+
+                res.json(account);
+            } else {
+                return ErrorHandler.notFound(req, res, 'Account not found');
+            }
+        } catch (error) {
+            return ErrorHandler.internalError(req, res, error);
+        }
+    }
+
     async forgotPin(req: Request, res: Response): Promise<void> {
         const { email } = req.body;
         try {
-            const secret_key = process.env.JWT_SECRET
+            const secret_key = process.env.JWT_SECRET;
             const [rows] = await db.query<RowDataPacket[]>(
                 'SELECT userId FROM users WHERE email = ?',
                 [email]
@@ -72,7 +131,7 @@ export class UserController {
 
     async resetPin(req: Request, res: Response): Promise<void> {
         const { token, pinNumber } = req.body;
-        const secret_key = process.env.JWT_SECRET
+        const secret_key = process.env.JWT_SECRET;
         const decoded = jwt.verify(token, secret_key!) as ResetPinJwtPayload;
         if (!decoded || decoded.action !== 'reset-pin') {
             return ErrorHandler.badRequest(

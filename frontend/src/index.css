@@ -1,7 +1,10 @@
 body {
-  display:flex;
-  justify-content: center;
-  flex-direction: column;
   margin: auto;
-  width:90%;
+  width:95%;
+}
+
+nav {
+  width:100%;
+  display: flex;
+
 }

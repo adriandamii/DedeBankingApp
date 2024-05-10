@@ -122,15 +122,15 @@ class Validator {
     }
     static validateMakeWithdrawal() {
         return [
-            body('uniqueAccountNumber')
-                .trim()
-                .notEmpty()
-                .withMessage('Account number is required')
-                .isNumeric()
-                .withMessage('Account number must contains only numbers')
-                .isLength({ min: 16, max: 16 })
-                .withMessage('Account must be 16 digits long')
-                .escape(),
+            // body('uniqueAccountNumber')
+            //     .trim()
+            //     .notEmpty()
+            //     .withMessage('Account number is required')
+            //     .isNumeric()
+            //     .withMessage('Account number must contains only numbers')
+            //     .isLength({ min: 16, max: 16 })
+            //     .withMessage('Account must be 16 digits long')
+            //     .escape(),
             body('cashFlowAmount')
                 .trim()
                 .notEmpty()

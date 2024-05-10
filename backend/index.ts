@@ -9,17 +9,23 @@ import accountRoutes from './routes/AccountRoute';
 import transactionRoutes from './routes/TransactionRoute';
 import cashFlowsRoutes from './routes/CashFlowRoute';
 import adminRoutes from './routes/AdminRoute';
+import authRoutes from './routes/AuthCheckRoute';
+import cookieParser from 'cookie-parser';
+
 import { authenticateToken } from './middleware/auth';
 
 dotenv.config();
+
 const app = express();
 const PORT = 5000;
 
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(
     cors({
         origin: ['http://localhost:3000'],
         methods: 'GET, POST, PUT, DELETE',
+        credentials: true,
     })
 );
 app.use((req, res, next) => {
@@ -36,6 +42,8 @@ app.use('/account', accountRoutes);
 app.use('/transaction', transactionRoutes);
 app.use('/cash-flows', cashFlowsRoutes);
 app.use('/admin', adminRoutes);
+app.use('/', authRoutes);
+
 
 
 app.listen(PORT, () =>

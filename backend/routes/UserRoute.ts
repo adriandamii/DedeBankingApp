@@ -45,4 +45,20 @@ router.get(
     userController.getUserData.bind(userController)
 );
 
+router.get(
+    '/accounts/:userId',
+    Validator.validateAdminGetAccounts(),
+    checkValidation,
+    RoleChecker.isCustomerOrAdmin,
+    userController.getAccountsByUserId.bind(userController)
+);
+
+router.get(
+    '/account/:accountId',
+    Validator.validateAdminGetAccountDetails(),
+    checkValidation,
+    RoleChecker.isCustomerOrAdmin,
+    userController.getAccountDetails.bind(userController)
+);
+
 export default router;

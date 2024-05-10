@@ -6,7 +6,7 @@ enum UserRole {
   Customer = "customer"
 }
 export interface CustomJwtPayload extends JwtPayload {
-  identityId?: number;
+  userId?: number;
   userRole: UserRole;
   email: string;
 }

@@ -36,21 +36,7 @@ router.get(
     adminController.getUsersList.bind(adminController)
 );
 
-router.get(
-    '/accounts/:userId',
-    Validator.validateAdminGetAccounts(),
-    checkValidation,
-    RoleChecker.isAdmin,
-    adminController.getAccountsByUserId.bind(adminController)
-);
 
-router.get(
-    '/account/:accountId',
-    Validator.validateAdminGetAccountDetails(),
-    checkValidation,
-    RoleChecker.isAdmin,
-    adminController.getAccountDetails.bind(adminController)
-);
 
 router.delete(
     '/delete/:userId',

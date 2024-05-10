@@ -134,7 +134,7 @@ export class CashFlowController {
     async withdrawalAction(req: Request, res: Response): Promise<void> {
         const { uniqueAccountNumber, cashFlowAmount, cashFlowType } = req.body;
         const userId = (req as any).user.userId;
-        
+        const userRole = (req as any).user.userRole;
         const connection = await db.getConnection();
     
         try {
@@ -148,7 +148,7 @@ export class CashFlowController {
                 return ErrorHandler.notFound(req, res, 'Account not found');
             }
     
-            if (ownershipResults[0].userId !== userId) {
+            if (ownershipResults[0].userId !== userId && userRole !== 'admin') {
                 await connection.rollback();
                 return ErrorHandler.unauthorized(req, res, "Access denied");
             }
