@@ -8,6 +8,9 @@ const AdminTransaction = () => {
     const handleRouteTransactionAction = () => {
         navigate(`/admin/account/${uniqueAccountNumber}/transaction/action`);
     };
+    const handleRouteTransactionHistory = () => {
+        navigate(`/admin/account/${uniqueAccountNumber}/transaction/history`);
+    };
     return (
         <div>
             <GoBackRoute />
@@ -15,6 +18,9 @@ const AdminTransaction = () => {
             <h2>You are on uniqueAccountNumber {uniqueAccountNumber}</h2>
             <Button onClick={handleRouteTransactionAction}>
                 Make a transaction
+            </Button>
+            <Button onClick={handleRouteTransactionHistory}>
+                Transaction history
             </Button>
         </div>
     );

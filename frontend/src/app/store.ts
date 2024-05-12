@@ -3,6 +3,7 @@ import authReducer from '../features/auth/authSlice';
 import usersSlice from '../features/users/usersSlice';
 import accountsSlice from '../features/accounts/accountsSlice';
 import cashFlowsSlice from '../features/cashFlows/cashFlowsSlice';
+import transactionsSlice from '../features/transactions/transactionsSlice';
 
 
 export const store = configureStore({
@@ -10,7 +11,8 @@ export const store = configureStore({
         auth: authReducer,
         users: usersSlice,
         accounts: accountsSlice,
-        cashFlows: cashFlowsSlice
+        cashFlows: cashFlowsSlice,
+        transactions: transactionsSlice
     },
 });
 

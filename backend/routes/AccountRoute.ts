@@ -10,7 +10,7 @@ const accountController = new AccountController();
 const checkValidation = ErrorHandler.validationError;
 
 router.post(
-    '/create-account',
+    '/create-account/:userId',
     Validator.validateCreateAccount(),
     checkValidation,
     RoleChecker.isAdmin,

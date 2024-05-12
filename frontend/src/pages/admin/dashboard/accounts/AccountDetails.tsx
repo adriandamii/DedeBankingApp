@@ -29,7 +29,9 @@ const AccountDetails = () => {
     const handleRouteTransaction = () => {
         navigate(`/admin/account/${account?.uniqueAccountNumber}/transaction`);
     };
-
+    const handleRouteCashFlowHistory = () => {
+        navigate(`/admin/account/${account?.uniqueAccountNumber}/cashflow-history`);
+    };
     return (
         <div>
             <h1>Account Details</h1>
@@ -43,8 +45,11 @@ const AccountDetails = () => {
             <Button onClick={handleRouteDeposit} color="secondary">
                 Deposit
             </Button>
+            <Button onClick={handleRouteCashFlowHistory} color="secondary">
+                Withdrawal/Deposit History
+            </Button>
             {status === 'loading' && <p>Loading...</p>}
-            {status === 'failed' && <p>Error: {error}</p>}
+            {status === 'failed' && <p>{error}</p>}
             {status === 'succeeded' && account && (
                 <div>
                     <p>Account ID: {account.accountId}</p>

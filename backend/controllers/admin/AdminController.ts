@@ -15,7 +15,7 @@ export class AdminController {
     async getUsersList(req: Request, res: Response): Promise<void> {
         const userRole = (req as any).user.userRole;
         if (userRole !== 'admin') {
-            console.log("neautorizaat")
+            console.log('neautorizaat');
             return ErrorHandler.unauthorized(req, res, 'Access denied');
         }
 
@@ -32,10 +32,6 @@ export class AdminController {
             return ErrorHandler.internalError(req, res, error);
         }
     }
-
-    
-
- 
 
     async editUserData(req: Request, res: Response): Promise<void> {
         const userRole = (req as any).user.userRole;

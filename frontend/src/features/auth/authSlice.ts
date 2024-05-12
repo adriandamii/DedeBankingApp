@@ -3,14 +3,14 @@ import { User } from '../../interfaces/userInterface';
 import { checkAuthStatus } from './authService';
 
 interface AuthState {
-  user: User | null; // Replace `any` with your User type if you have one defined
+  user: User | null;
   isLoggedIn: boolean;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
 }
 
 interface AuthPayload {
   isLoggedIn: boolean;
-  user?: User; // Replace `any` with your User type if you have one defined
+  user?: User;
 }
 
 const initialState: AuthState = {

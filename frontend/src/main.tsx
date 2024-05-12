@@ -16,11 +16,18 @@ import { UserDetails } from './pages/admin/dashboard/users/UserDetails';
 import { UserAccounts } from './pages/admin/dashboard/accounts/UserAccounts';
 import AccountDetails from './pages/admin/dashboard/accounts/AccountDetails';
 import AdminTransaction from './pages/admin/dashboard/transactions/AdminTransaction';
-import AdminWithdrawal from './pages/admin/dashboard/withdrawals/AdminWithdrawal';
-import AdminDeposit from './pages/admin/dashboard/deposits/AdminDeposit';
-import AdminWithdrawalAction from './pages/admin/dashboard/withdrawals/AdminWithdrawalAction';
+import AdminWithdrawal from './pages/admin/dashboard/cashFlows/withdrawals/AdminWithdrawal';
+import AdminDeposit from './pages/admin/dashboard/cashFlows/deposits/AdminDeposit';
+import AdminWithdrawalAction from './pages/admin/dashboard/cashFlows/withdrawals/AdminWithdrawalAction';
 import AdminTransactionAction from './pages/admin/dashboard/transactions/AdminTransactionAction';
-import AdminDepositAction from './pages/admin/dashboard/deposits/AdminDepositAction';
+import AdminDepositAction from './pages/admin/dashboard/cashFlows/deposits/AdminDepositAction';
+import AdminWithdrawalHistory from './pages/admin/dashboard/cashFlows/withdrawals/AdminWithdrawalHistory';
+import AdminDepositHistory from './pages/admin/dashboard/cashFlows/deposits/AdminDepositHistory';
+import AdminTransactionHistory from './pages/admin/dashboard/transactions/AdminTransactionHistory';
+import AdminCashFlowHistory from './pages/admin/dashboard/cashFlows/CashFlowHistory';
+import CreateUser from './pages/admin/dashboard/users/CreateUser';
+import EditUser from './pages/admin/dashboard/users/EditUser';
+import CreateAccount from './pages/admin/dashboard/accounts/CreateAccount';
 
 const router = createBrowserRouter([
   {
@@ -40,16 +47,32 @@ const router = createBrowserRouter([
         element: <UserDetails />,
       },
       {
+        path: "/users/:userId/edit-user",
+        element: <EditUser />,
+      },
+      {
         path: "/users/:userId/accounts",
         element: <UserAccounts />,
+      },
+      {
+        path: "/users/:userId/accounts/create",
+        element: <CreateAccount />,
       },
       {
         path: "/admin/account/:uniqueAccountNumber/transaction",
         element: <AdminTransaction />,
       },
       {
+        path: "/admin/account/:uniqueAccountNumber/cashflow-history",
+        element: <AdminCashFlowHistory />,
+      },
+      {
         path: "/admin/account/:uniqueAccountNumber/transaction/action",
         element: <AdminTransactionAction />,
+      },
+      {
+        path: "/admin/account/:uniqueAccountNumber/transaction/history",
+        element: <AdminTransactionHistory />,
       },
       {
         path: "/admin/account/:uniqueAccountNumber/withdrawal",
@@ -60,12 +83,20 @@ const router = createBrowserRouter([
         element: <AdminWithdrawalAction />,
       },
       {
+        path: "/admin/account/:uniqueAccountNumber/withdrawal/history",
+        element: <AdminWithdrawalHistory />,
+      },
+      {
         path: "/admin/account/:uniqueAccountNumber/deposit",
         element: <AdminDeposit />,
       },
       {
-        path: "/admin/account/:accountId/deposit/action",
+        path: "/admin/account/:uniqueAccountNumber/deposit/action",
         element: <AdminDepositAction />,
+      },
+      {
+        path: "/admin/account/:uniqueAccountNumber/deposit/history",
+        element: <AdminDepositHistory />,
       },
       {
         path: "/users/:userId/accounts/:accountId",
@@ -75,9 +106,14 @@ const router = createBrowserRouter([
         path: "admin/management",
         element: <AdminManagement />,
       },
+      
       {
         path: "admin/create",
         element: <AdminCreate />,
+      },
+      {
+        path: 'admin/create-user',
+        element: <CreateUser />,
       },
       {
         path: "admin/send-login-password",

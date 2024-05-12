@@ -10,8 +10,9 @@ dotenv.config();
 
 export class CashFlowController {
     async getCashFLows(req: Request, res: Response): Promise<void> {
-        const { uniqueAccountNumber } = req.body;
+        const { uniqueAccountNumber } = req.params;
         const userId = (req as any).user.userId;
+        const userRole = (req as any).user.userRole;
 
         try {
             const ownerQuery =
@@ -24,7 +25,7 @@ export class CashFlowController {
                 return ErrorHandler.notFound(req, res, 'Account not found');
             }
 
-            if (ownerResults[0].userId !== userId) {
+            if (ownerResults[0].userId !== userId && userRole !== "admin") {
                 return ErrorHandler.unauthorized(req, res, 'Access denied');
             }
 
@@ -45,9 +46,10 @@ export class CashFlowController {
     }
 
     async getWithdrawals(req: Request, res: Response): Promise<void> {
-        const { uniqueAccountNumber } = req.body;
+        const { uniqueAccountNumber } = req.params;
         const userId = (req as any).user.userId;
         const cashFlowType = 'withdrawal';
+        const userRole = (req as any).user.userRole;
 
         try {
             const ownershipQuery =
@@ -61,7 +63,7 @@ export class CashFlowController {
                 return ErrorHandler.notFound(req, res, 'Account not found');
             }
 
-            if (ownershipResults[0].userId !== userId) {
+            if (ownershipResults[0].userId !== userId && userRole !== "admin") {
                 return ErrorHandler.unauthorized(
                     req,
                     res,
@@ -91,8 +93,9 @@ export class CashFlowController {
     }
 
     async getDeposits(req: Request, res: Response): Promise<void> {
-        const { uniqueAccountNumber } = req.body;
+        const { uniqueAccountNumber } = req.params;
         const userId = (req as any).user.userId;
+        const userRole = (req as any).user.userRole;
 
         const cashFlowType = 'deposit';
         try {
@@ -107,7 +110,7 @@ export class CashFlowController {
                 return ErrorHandler.notFound(req, res, 'Account not found');
             }
 
-            if (ownershipResults[0].userId !== userId) {
+            if (ownershipResults[0].userId !== userId && userRole !== "admin") {
                 return ErrorHandler.unauthorized(
                     req,
                     res,
@@ -184,7 +187,8 @@ export class CashFlowController {
     async depositAction(req: Request, res: Response): Promise<void> {
         const { uniqueAccountNumber, cashFlowAmount, cashFlowType } = req.body;
         const userId = (req as any).user.userId;
-    
+        const userRole = (req as any).user.userRole;
+
         const connection = await db.getConnection();
     
         try {
@@ -198,7 +202,7 @@ export class CashFlowController {
                 return ErrorHandler.notFound(req, res, 'Account not found');
             }
     
-            if (ownerResults[0].userId !== userId) {
+            if (ownerResults[0].userId !== userId && userRole !== 'admin') {
                 await connection.rollback();
                 return ErrorHandler.unauthorized(req, res, "Access denied");
             }

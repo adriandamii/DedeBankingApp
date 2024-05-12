@@ -34,7 +34,7 @@ export class AccountController {
         try {
             const account: Account = AccountFactory.createAccount(req.body);
 
-            const { userId } = req.body;
+            const { userId } = req.params;
 
             const userQuery = `SELECT * FROM users WHERE userId = ?`;
             const [userResults] = await db.query<RowDataPacket[]>(userQuery, [

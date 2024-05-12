@@ -26,15 +26,14 @@ router.put(
 );
 
 router.get(
-    '/all-cash-flows',
-    Validator.validateUniqueAccountNumber(),
+    '/all-cash-flows/:uniqueAccountNumber',
     checkValidation,
     RoleChecker.isCustomerOrAdmin,
     cashFlowController.getCashFLows.bind(cashFlowController)
 );
 
 router.get(
-    '/all-withdrawals',
+    '/all-withdrawals/:uniqueAccountNumber',
     Validator.validateGetWithdrawal(),
     checkValidation,
     RoleChecker.isCustomerOrAdmin,
@@ -42,7 +41,7 @@ router.get(
 );
 
 router.get(
-    '/all-deposits',
+    '/all-deposits/:uniqueAccountNumber',
     Validator.validateGetDeposits(),
     checkValidation,
     RoleChecker.isCustomerOrAdmin,

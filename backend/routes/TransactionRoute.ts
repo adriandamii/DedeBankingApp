@@ -18,7 +18,7 @@ router.post(
 );
 
 router.get(
-    '/all-transactions',
+    '/all-transactions/:senderAccountNumber',
     Validator.validateSenderAccountNumber(),
     checkValidation,
     RoleChecker.isCustomerOrAdmin,

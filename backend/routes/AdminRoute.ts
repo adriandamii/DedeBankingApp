@@ -25,7 +25,7 @@ router.post(
     '/create-user',
     Validator.validateUserRegistration(),
     checkValidation,
-    RoleChecker.isAdmin,
+    //RoleChecker.isAdmin,
     adminController.registerUser.bind(adminController)
 );
 

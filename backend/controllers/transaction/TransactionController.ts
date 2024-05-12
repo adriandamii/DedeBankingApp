@@ -10,9 +10,9 @@ dotenv.config();
 
 export class TransactionController {
     async getTransactionsList(req: Request, res: Response): Promise<void> {
-        const { senderAccountNumber } = req.body;
+        const { senderAccountNumber } = req.params;
         const userId = (req as any).user.userId;
-
+        const userRole = (req as any).user.userRole;
         try {
             const accountQuery =
                 'SELECT userId FROM accounts WHERE uniqueAccountNumber = ?';
@@ -20,16 +20,17 @@ export class TransactionController {
                 accountQuery,
                 [senderAccountNumber]
             );
-            if (accountResults[0].userId !== userId) {
+            if (accountResults[0].userId !== userId && userRole !== "admin") {
                 return ErrorHandler.unauthorized(req, res, 'Access denied');
             }
             const transactionQuery =
-                'SELECT * FROM accounts WHERE uniqueAccountNumber = ?';
+                'SELECT * FROM transactions WHERE senderAccountNumber = ?';
             const [transactionResults] = await db.query<RowDataPacket[]>(
                 transactionQuery,
                 [senderAccountNumber]
             );
             if (transactionResults.length > 0) {
+                console.log(transactionResults)
                 res.json(transactionResults);
             } else {
                 return ErrorHandler.notFound(
@@ -88,6 +89,7 @@ export class TransactionController {
             req.body
         );
         const userId = (req as any).user.userId;
+        const userRole = (req as any).user.userRole;
 
         if (
             !transaction.senderAccountNumber ||
@@ -115,7 +117,7 @@ export class TransactionController {
                 );
             }
 
-            if (account[0].userId !== userId) {
+            if (account[0].userId !== userId && userRole !== "admin") {
                 await connection.rollback();
                 return ErrorHandler.unauthorized(
                     req,

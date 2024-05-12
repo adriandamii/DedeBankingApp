@@ -16,6 +16,10 @@ const initialState: AccountsState = {
     error: null,
 };
 
+interface CreateAccount  {
+    userId: string;
+    amount: string;
+}
 interface FetchAccountsError {
     errorMessage: string;
 }
@@ -32,11 +36,14 @@ export const fetchAccountsByUserId = createAsyncThunk<
         );
         return response.data;
     } catch (error) {
-        let errorMessage = 'Failed to fetch accounts';
-        if (axios.isAxiosError(error)) {
-            errorMessage = error.response?.data.message || errorMessage;
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage =
+                error.response.data.message || 'Failed to fetch accounts';
+            return rejectWithValue({ errorMessage });
         }
-        return rejectWithValue({ errorMessage });
+        return rejectWithValue({
+            errorMessage: 'Failed to fetch accounts',
+        });
     }
 });
 
@@ -44,26 +51,56 @@ export const fetchAccountDetails = createAsyncThunk<
     Account,
     string,
     { rejectValue: FetchAccountsError }
->(
-    'accounts/fetchAccountDetails',
-    async ( accountId , { rejectWithValue }) => {
-        try {
-            const response = await axios.get(
-                `http://localhost:5000/user/account/${accountId}`,
-                {
-                    withCredentials: true,
-                }
-            );
-            return response.data;
-         } catch (error) {
-            let errorMessage = 'Failed to fetch account details';
-            if (axios.isAxiosError(error)) {
-                errorMessage = error.response?.data.message || errorMessage;
+>('accounts/fetchAccountDetails', async (accountId, { rejectWithValue }) => {
+    try {
+        const response = await axios.get(
+            `http://localhost:5000/user/account/${accountId}`,
+            {
+                withCredentials: true,
             }
-            return rejectWithValue({ errorMessage });
+        );
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errors = error.response.data.errors;
+            if (errors && errors.length > 0) {
+                return rejectWithValue({ errorMessage: errors.join(', ') });
+            }
         }
+        return rejectWithValue({
+            errorMessage: 'Failed to fetch account details',
+        });
     }
-);
+});
+
+export const createAccount = createAsyncThunk<
+    Account,
+    CreateAccount,
+    { rejectValue: FetchAccountsError }
+>('accounts/createAccount', async ({amount, userId}, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(
+            `http://localhost:5000/account/create-account/${userId}`,
+            {
+                amount,
+            },
+            {
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errors = error.response.data.errors;
+            if (errors && errors.length > 0) {
+                return rejectWithValue({ errorMessage: errors.join(', ') });
+            }
+        }
+        return rejectWithValue({
+            errorMessage: 'Failed to create account',
+        });
+    }
+});
 
 const accountsSlice = createSlice({
     name: 'accounts',
@@ -97,6 +134,18 @@ const accountsSlice = createSlice({
                 }
             )
             .addCase(fetchAccountDetails.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error =
+                    action.payload?.errorMessage || 'Unknown error occurred';
+            })
+            .addCase(createAccount.fulfilled, (state, action) => {
+                state.accounts.push(action.payload);
+                state.status = 'succeeded';
+            })
+            .addCase(createAccount.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(createAccount.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error =
                     action.payload?.errorMessage || 'Unknown error occurred';

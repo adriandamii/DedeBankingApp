@@ -8,12 +8,12 @@ class Validator {
             body('amount')
                 .trim()
                 .notEmpty()
-                .withMessage('Account number is required')
+                .withMessage('The amount is required')
                 .isLength({ max: 7 })
-                .withMessage('Account must be 7 digits long')
+                .withMessage('The amount must be 7 digits long')
                 .isNumeric()
-                .withMessage('Account number must contains only numbers'),
-            body('userId')
+                .withMessage('The amount must contains only numbers'),
+            param('userId')
                 .trim()
                 .notEmpty()
                 .withMessage('User ID is required')
@@ -55,9 +55,9 @@ class Validator {
             param('accountId')
                 .trim()
                 .notEmpty()
-                .withMessage('Identity ID is required')
+                .withMessage('Account ID is required')
                 .isNumeric()
-                .withMessage('Identity ID must be numeric')
+                .withMessage('Account ID must be numeric')
                 .escape(),
         ];
     }
@@ -71,15 +71,7 @@ class Validator {
     }
     static validateGetWithdrawal() {
         return [
-            body('uniqueAccountNumber')
-                .trim()
-                .notEmpty()
-                .withMessage('Account number is required')
-                .isNumeric()
-                .withMessage('Account number must contains only numbers')
-                .isLength({ min: 16, max: 16 })
-                .withMessage('Account must be 16 digits long')
-                .escape(),
+        
         ];
     }
     static validateMakeDeposit() {
@@ -91,16 +83,16 @@ class Validator {
                 .isNumeric()
                 .withMessage('Account number must contains only numbers')
                 .isLength({ min: 16, max: 16 })
-                .withMessage('Account must be 16 digits long')
+                .withMessage('Account number must be 16 digits long')
                 .escape(),
             body('cashFlowAmount')
                 .trim()
                 .notEmpty()
-                .withMessage('Account number is required')
+                .withMessage('Amount number is required')
                 .isLength({ max: 7 })
-                .withMessage('Account must be 7 digits long')
+                .withMessage('Amount must be 7 digits long')
                 .isNumeric()
-                .withMessage('Account number must contains only numbers'),
+                .withMessage('Amount number must contains only numbers'),
             body('cashFlowType')
                 .equals('deposit')
                 .withMessage('Cash flow type must be deposit'),
@@ -122,30 +114,6 @@ class Validator {
     }
     static validateMakeWithdrawal() {
         return [
-            // body('uniqueAccountNumber')
-            //     .trim()
-            //     .notEmpty()
-            //     .withMessage('Account number is required')
-            //     .isNumeric()
-            //     .withMessage('Account number must contains only numbers')
-            //     .isLength({ min: 16, max: 16 })
-            //     .withMessage('Account must be 16 digits long')
-            //     .escape(),
-            body('cashFlowAmount')
-                .trim()
-                .notEmpty()
-                .withMessage('Account number is required')
-                .isLength({ max: 7 })
-                .withMessage('Account must be 7 digits long')
-                .isNumeric()
-                .withMessage('Account number must contains only numbers'),
-            body('cashFlowType')
-                .equals('withdrawal')
-                .withMessage('Cash flow type must be withdrawal'),
-        ];
-    }
-    static validateGetDeposits() {
-        return [
             body('uniqueAccountNumber')
                 .trim()
                 .notEmpty()
@@ -155,6 +123,30 @@ class Validator {
                 .isLength({ min: 16, max: 16 })
                 .withMessage('Account must be 16 digits long')
                 .escape(),
+            body('cashFlowAmount')
+                .trim()
+                .notEmpty()
+                .withMessage('Amount is required')
+                .isLength({ max: 7 })
+                .withMessage('Amount must be 7 digits long')
+                .isNumeric()
+                .withMessage('Amount must contains only numbers'),
+            body('cashFlowType')
+                .equals('withdrawal')
+                .withMessage('Cash flow type must be withdrawal'),
+        ];
+    }
+    static validateGetDeposits() {
+        return [
+            // body('uniqueAccountNumber')
+            //     .trim()
+            //     .notEmpty()
+            //     .withMessage('Account number is required')
+            //     .isNumeric()
+            //     .withMessage('Account number must contains only numbers')
+            //     .isLength({ min: 16, max: 16 })
+            //     .withMessage('Account must be 16 digits long')
+            //     .escape(),
         ];
     }
     static validateUserResetPin() {
@@ -167,7 +159,7 @@ class Validator {
                 .isNumeric()
                 .withMessage('Pin number must contains only numbers')
                 .isLength({ min: 6 })
-                .withMessage('PIN must be at least 4 digits long')
+                .withMessage('PIN must be at least 6 digits long')
                 .escape(),
         ];
     }
@@ -175,7 +167,7 @@ class Validator {
         return [
             param('userId')
                 .isNumeric()
-                .withMessage('Identity ID must be numeric'),
+                .withMessage('User ID must be numeric'),
         ];
     }
     static validateUserEdit() {
@@ -202,15 +194,15 @@ class Validator {
     }
     static validateSenderAccountNumber() {
         return [
-            body('senderAccountNumber')
-                .trim()
-                .notEmpty()
-                .withMessage('Account number is required')
-                .isNumeric()
-                .withMessage('Account number must contains only numbers')
-                .isLength({ min: 16 })
-                .withMessage('Account must be at least 16 digits long')
-                .escape(),
+            // body('senderAccountNumber')
+            //     .trim()
+            //     .notEmpty()
+            //     .withMessage('Sender account number is required')
+            //     .isNumeric()
+            //     .withMessage('Sender account number must contains only numbers')
+            //     .isLength({ min: 16 })
+            //     .withMessage('Sender account number must be at least 16 digits long')
+            //     .escape(),
         ];
     }
     static validateReceiverAccountNumber() {
@@ -218,11 +210,11 @@ class Validator {
             body('receiverAccountNumber')
                 .trim()
                 .notEmpty()
-                .withMessage('Account number is required')
+                .withMessage('Receiver account number is required')
                 .isNumeric()
-                .withMessage('Account number must contains only numbers')
+                .withMessage('Receiver account number must contains only numbers')
                 .isLength({ min: 16 })
-                .withMessage('Account must be at least 16 digits long')
+                .withMessage('Receiver account number must be at least 16 digits long')
                 .escape(),
         ];
     }
@@ -246,37 +238,24 @@ class Validator {
                 .escape(),
         ];
     }
-    static validateUniqueAccountNumber() {
-        return [
-            body('uniqueAccountNumber')
-                .trim()
-                .notEmpty()
-                .withMessage('Account number is required')
-                .isNumeric()
-                .withMessage('Account number must contains only numbers')
-                .isLength({ min: 16, max: 16 })
-                .withMessage('Account must be 16 digits long')
-                .escape(),
-        ];
-    }
     static validateMakeTransaction() {
         return [
             body('senderAccountNumber')
                 .trim()
                 .notEmpty()
-                .withMessage('Account number is required')
+                .withMessage('Sender account number is required')
                 .isNumeric()
-                .withMessage('Account number must contains only numbers')
+                .withMessage('Sender account number must contains only numbers')
                 .isLength({ min: 16, max: 16 })
-                .withMessage('Account must be 16 digits long')
+                .withMessage('Sender account must be 16 digits long')
                 .escape(),
             body('receiverAccountNumber')
                 .trim()
                 .notEmpty()
-                .withMessage('Account number is required')
+                .withMessage('Receiver account number is required')
                 .isNumeric()
                 .isLength({ min: 16, max: 16 })
-                .withMessage('Account must be 16 digits long')
+                .withMessage('Receiver account must be 16 digits long')
                 .escape(),
             body('transactionAmount')
                 .trim()
@@ -284,8 +263,8 @@ class Validator {
                 .withMessage('Transaction amount is required')
                 .isNumeric()
                 .withMessage('Transaction amount must contains only numbers')
-                .isLength({ min: 2, max: 7 })
-                .withMessage('Account must be at least 2 digits long')
+                .isLength({ max: 7 })
+                .withMessage('Transaction amount must be less than 7 digits long')
                 .escape(),
         ];
     }
@@ -297,11 +276,11 @@ class Validator {
             body('senderAccountNumber')
                 .trim()
                 .notEmpty()
-                .withMessage('Account number is required')
+                .withMessage('Sender account number is required')
                 .isNumeric()
-                .withMessage('Account number must contains only numbers')
+                .withMessage('Sender account number must contains only numbers')
                 .isLength({ min: 16, max: 16 })
-                .withMessage('Account must be 16 digits long')
+                .withMessage('Sender account number must be 16 digits long')
                 .escape(),
         ];
     }
