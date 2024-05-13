@@ -32,8 +32,8 @@ const AdminWithdrawalAction = () => {
 
     return (
         <div>
-            <GoBackRoute />
             <h1>Withdrawal Action</h1>
+            <GoBackRoute />
             <h2>Account ID: {uniqueAccountNumber}</h2>
             <form onSubmit={handleWithdrawal}>
                 <input

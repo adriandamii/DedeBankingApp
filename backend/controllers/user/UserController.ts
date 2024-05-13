@@ -4,7 +4,11 @@ import { RowDataPacket } from 'mysql2';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
-import { ResetPinJwtPayload } from '../../interfaces/token/token';
+import {
+    ResetPinJwtPayload,
+    TokenIdJwtPayload,
+    UserIdJwtPayload,
+} from '../../interfaces/token/token';
 import { transporter } from '../../utils/mailerService';
 import ErrorHandler from '../../middleware/ErrorHandler';
 
@@ -106,17 +110,16 @@ export class UserController {
 
             const user = rows[0];
             const token = jwt.sign(
-                { identityId: user.identityId, action: 'reset-pin' },
+                { userId: user.userId, action: 'reset-pin' },
                 secret_key!,
                 { expiresIn: '1h' }
             );
 
-            const resetLink = `http://localhost/reset-pin/${token}`;
+            const resetLink = `http://localhost:3000/reset-pin/${token}`;
             await transporter.sendMail({
                 from: '"Dede Banking App" <adrian.damii@yahoo.com>',
                 to: email,
                 subject: 'Forgot PIN number',
-                text: `Hi ${user.lastName} ${user.firstName} Please click on the following link to verify your account: ${resetLink}`,
                 html: `<p>Please click on this <a href="${resetLink}">link</a> to reset your PIN.</p>`,
             });
 
@@ -130,18 +133,16 @@ export class UserController {
     }
 
     async resetPin(req: Request, res: Response): Promise<void> {
-        const { token, pinNumber } = req.body;
+        const { pinNumber } = req.body;
+        const { token } = req.params;
         const secret_key = process.env.JWT_SECRET;
-        const decoded = jwt.verify(token, secret_key!) as ResetPinJwtPayload;
-        if (!decoded || decoded.action !== 'reset-pin') {
-            return ErrorHandler.badRequest(
-                req,
-                res,
-                'Invalid or expired token'
-            );
-        }
 
         try {
+            const decoded = jwt.verify(token, secret_key!) as ResetPinJwtPayload;
+
+        if (decoded.action !== 'reset-pin') {
+            return ErrorHandler.badRequest(req, res, 'Invalid token action.');
+        }
             const saltRounds = 10;
             const hashedPin = await bcrypt.hash(pinNumber, saltRounds);
             await db.query('UPDATE users SET pinNumber = ? WHERE userId = ?', [
@@ -151,25 +152,34 @@ export class UserController {
 
             res.send({ message: 'PIN successfully reset.' });
         } catch (error) {
-            return ErrorHandler.internalError(req, res, error);
+            if (error instanceof jwt.TokenExpiredError) {
+                return ErrorHandler.unauthorized(req, res, 'Token has expired, please request a new reset link.');
+            } else if (error instanceof jwt.JsonWebTokenError) {
+                return ErrorHandler.unauthorized(req, res, 'Invalid token.');
+            } else {
+                return ErrorHandler.internalError(req, res, error);
+            }
         }
     }
     async setUserPin(req: Request, res: Response): Promise<void> {
         try {
-            const { pinNumber, identityId } = req.body;
-
+            const secret_key = process.env.JWT_SECRET;
+            const { pinNumber } = req.body;
+            const { token } = req.params as TokenIdJwtPayload;
+            const decoded = jwt.verify(token, secret_key!) as UserIdJwtPayload;
+            const userId = decoded.userId;
             const saltRounds = 10;
             const hashedPin = await bcrypt.hash(pinNumber, saltRounds);
 
             const updatePinQuery = `UPDATE users SET pinNumber = ? WHERE identityId = ?`;
             const pinUpdateResult = await db.query<RowDataPacket[]>(
                 updatePinQuery,
-                [hashedPin, identityId]
+                [hashedPin, userId]
             );
 
             if (pinUpdateResult.length > 0) {
                 const updateActiveQuery = `UPDATE users SET isActive = 1 WHERE identityId = ?`;
-                await db.query(updateActiveQuery, [identityId]);
+                await db.query(updateActiveQuery, [userId]);
                 res.json({
                     message: 'Pin number set successfully',
                 });
@@ -200,7 +210,6 @@ export class UserController {
 
             const pinValid = await bcrypt.compare(pinNumber, user[0].pinNumber);
             if (!pinValid) {
-                res.status(401).json({ message: 'Invalid PIN number.' });
                 return ErrorHandler.unauthorized(
                     req,
                     res,
@@ -211,15 +220,14 @@ export class UserController {
                 {
                     userId: user[0].userId,
                     userRole: user[0].userRole,
-                    email: email,
                 },
                 process.env.JWT_SECRET || secret_key!,
                 { expiresIn: '24h' }
             );
-            // res.cookie('token', token, {
-            //     httpOnly: true,
-            //     sameSite: 'strict',
-            // });
+            res.cookie('token', token, {
+                httpOnly: true,
+                sameSite: 'strict',
+            });
             res.json({ message: 'Login successful!', token: token });
         } catch (error) {
             return ErrorHandler.internalError(req, res, error);

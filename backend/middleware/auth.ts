@@ -11,23 +11,26 @@ export const authenticateToken = (
     next: NextFunction
 ): void => {
     const publicRoutes = [
-        '/auth-check',
-        '/user/set-pin',
-        '/user/login-customer',
-        '/user/reset-pin',
-        '/user/forgot-pin',
-        '/admin/create-admin',
-        '/admin/send-login-password',
-        '/admin/verify-login-password',
+        /^\/auth-check$/,
+        /^\/user\/set-pin\/[^\/]+$/,
+        /^\/user\/login-customer$/,
+        /^\/user\/reset-pin\/[^\/]+$/,
+        /^\/user\/forgot-pin$/,
+        /^\/admin\/create-admin$/,
+        /^\/admin\/send-login-password$/,
+        /^\/admin\/verify-login-password$/
     ];
+    
     const path = req.originalUrl;
-    if (publicRoutes.includes(path)) {
+    const isPublicRoute = publicRoutes.some(pattern => pattern.test(path));
+    
+    if (isPublicRoute) {
         return next();
     }
 
     const token = req.cookies.token;
     if (!token) {
-        return ErrorHandler.unauthorized(req, res, 'Unauthorized access');
+        return ErrorHandler.unauthorized(req, res, 'Unauthorized access from middleware');
     }
 
     const secret = process.env.JWT_SECRET;

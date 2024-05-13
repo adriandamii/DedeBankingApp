@@ -28,12 +28,38 @@ import AdminCashFlowHistory from './pages/admin/dashboard/cashFlows/CashFlowHist
 import CreateUser from './pages/admin/dashboard/users/CreateUser';
 import EditUser from './pages/admin/dashboard/users/EditUser';
 import CreateAccount from './pages/admin/dashboard/accounts/CreateAccount';
+import UserSetPin from './pages/customer/initialization/UserSetPin';
+import UserLogin from './pages/customer/initialization/UserLogin';
+import ForgotPin from './pages/customer/resetAndForgotPin/ForgotPin';
+import ResetPin from './pages/customer/resetAndForgotPin/ResetPin';
+import SearchPage from './pages/admin/dashboard/search/SearchPage';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,  // Layout wraps around all child routes
+    element: <Layout />,
     children: [
+
+      {
+        path: "search",
+        element: <SearchPage/>,
+      },
+      {
+        path: "set-pin/:token",
+        element: <UserSetPin/>,
+      },
+      {
+        path: "login",
+        element: <UserLogin/>,
+      },
+      {
+        path: "forgot-pin",
+        element: <ForgotPin/>,
+      },
+      {
+        path: "reset-pin/:token",
+        element: <ResetPin/>,
+      },
       {
         path: "admin/dashboard",
         element: <AdminDashboard />,

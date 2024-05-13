@@ -15,8 +15,8 @@ const AdminWithdrawal = () => {
    
     return (
         <div>
-            <GoBackRoute />
             <h1>Admin Withdrawal page</h1>
+            <GoBackRoute />
             <h1>Sunt aici</h1>
             <h2>You are on uniqueAccountNumber {uniqueAccountNumber}</h2>
             <Button onClick={handleRouteWithdrawalAction}>

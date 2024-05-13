@@ -26,7 +26,7 @@ export const UserDetails = () => {
         navigate(`/users/${userId}/edit-user`);
     };
 
-    const handleDelete = () => {
+    const handleDeleteUser = () => {
         if (window.confirm('Are you sure you want to delete this user?')) {
             dispatch(deleteUser(userId!))
                 .unwrap()
@@ -47,7 +47,7 @@ export const UserDetails = () => {
             <span>
                  <Button onClick={handleClick}>User Accounts</Button>
                  <Button onClick={handleRouteEditUser}>Edit User</Button>
-                 <Button variant="contained" color="error" onClick={handleDelete}>Delete User</Button>
+                 <Button variant="contained" color="error" onClick={handleDeleteUser}>Delete User</Button>
 
             </span>
             {user ? (

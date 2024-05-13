@@ -12,19 +12,76 @@ import jwt from 'jsonwebtoken';
 dotenv.config();
 
 export class AdminController {
+    async searchUserByIdentityId(req: Request, res: Response): Promise<void> {
+        const { identityId } = req.query;
+        if (!(req as any).user || (req as any).user.userRole !== 'admin') {
+            return ErrorHandler.unauthorized(
+                req,
+                res,
+                'Access denied: Admins only'
+            );
+        }
+
+        if (!identityId) {
+            return ErrorHandler.badRequest(
+                req,
+                res,
+                'Identity ID is required for search'
+            );
+        }
+        try {
+            const query = 'SELECT * FROM users WHERE identityId = ?';
+            const [results] = await db.query<RowDataPacket[]>(query, [
+                identityId,
+            ]);
+
+            if (results.length > 0) {
+                res.json(results[0]);
+            } else {
+                res.status(404).json({
+                    message: 'No users found with that identity ID',
+                });
+            }
+        } catch (error) {
+            return ErrorHandler.internalError(req, res, error);
+        }
+    }
+
     async getUsersList(req: Request, res: Response): Promise<void> {
         const userRole = (req as any).user.userRole;
         if (userRole !== 'admin') {
-            console.log('neautorizaat');
             return ErrorHandler.unauthorized(req, res, 'Access denied');
         }
 
+        const limit = parseInt(req.query.limit as string) || 10;
+        const page = parseInt(req.query.page as string) || 1;
+        const offset = (page - 1) * limit;
+
         try {
-            const query = 'SELECT * FROM users';
-            const [results] = await db.query<RowDataPacket[]>(query);
+            const query =
+                'SELECT * FROM users WHERE userRole = ? LIMIT ? OFFSET ?';
+            const countQuery =
+                'SELECT COUNT(*) AS count FROM users WHERE userRole = ?';
+            const [results] = await db.query<RowDataPacket[]>(query, [
+                'customer',
+                limit,
+                offset,
+            ]);
+            const [totalResults] = await db.query<RowDataPacket[]>(countQuery, [
+                'customer',
+            ]);
+
+            const total = totalResults[0].count;
+            const totalPages = Math.ceil(total / limit);
 
             if (results.length > 0) {
-                res.json(results);
+                res.json({
+                    data: results,
+                    total,
+                    totalPages,
+                    page,
+                    limit,
+                });
             } else {
                 return ErrorHandler.notFound(req, res, 'User not found');
             }
@@ -92,6 +149,7 @@ export class AdminController {
         }
 
         try {
+            const secret_key = process.env.JWT_SECRET;
             const user: User = UserFactory.createUser({
                 ...req.body,
                 userRole: 'customer',
@@ -113,8 +171,11 @@ export class AdminController {
                 user.identityId,
                 user.userRole,
             ]);
+            const token = jwt.sign({ userId: user.identityId }, secret_key!, {
+                expiresIn: '1h',
+            });
 
-            const verificationUrl = `http://localhost:3000/set-pin`;
+            const verificationUrl = `http://localhost:3000/set-pin/${token}`;
 
             await transporter.sendMail({
                 from: '"Dede Banking App" <adrian.damii@yahoo.com>',
@@ -123,7 +184,6 @@ export class AdminController {
                 text: `Hi ${user.lastName} ${user.firstName} Please click on the following link to verify your account: ${verificationUrl}`,
                 html: `<p> ${user.lastName} ${user.firstName} Please click on the following link to verify your account: <a href="${verificationUrl}">Verify Account</a></p>`,
             });
-
             res.json({
                 message: 'User registered successfully',
                 data: newUser,
@@ -302,52 +362,52 @@ export class AdminController {
             connection.release();
         }
     }
-    async deleteAccount(req: Request, res: Response): Promise<void> {
-        const adminUserRole = (req as any).user.userRole;
-        const { accountId } = req.params;
+    // async deleteAccount(req: Request, res: Response): Promise<void> {
+    //     const adminUserRole = (req as any).user.userRole;
+    //     const { accountId } = req.params;
+    //     res.json({message: "hei"})
+    //     if (adminUserRole !== 'admin') {
+    //         return ErrorHandler.unauthorized(
+    //             req,
+    //             res,
+    //             'Access denied: Admins only'
+    //         );
+    //     }
 
-        if (adminUserRole !== 'admin') {
-            return ErrorHandler.unauthorized(
-                req,
-                res,
-                'Access denied: Admins only'
-            );
-        }
+    //     const connection = await db.getConnection();
 
-        const connection = await db.getConnection();
+    //     try {
+    //         await connection.beginTransaction();
 
-        try {
-            await connection.beginTransaction();
+    //         await connection.query(
+    //             'DELETE FROM cashFlows WHERE uniqueAccountNumber = ?',
+    //             [accountId]
+    //         );
 
-            await connection.query(
-                'DELETE FROM cashFlows WHERE uniqueAccountNumber = ?',
-                [accountId]
-            );
+    //         await connection.query(
+    //             'DELETE FROM transactions WHERE senderAccountNumber = ?',
+    //             [accountId, accountId]
+    //         );
 
-            await connection.query(
-                'DELETE FROM transactions WHERE senderAccountNumber = ? OR receiverAccountNumber = ?',
-                [accountId, accountId]
-            );
+    //         const [deleteResult] = await connection.query<ResultSetHeader>(
+    //             'DELETE FROM accounts WHERE uniqueAccountNumber = ?',
+    //             [accountId]
+    //         );
 
-            const [deleteResult] = await connection.query<ResultSetHeader>(
-                'DELETE FROM accounts WHERE uniqueAccountNumber = ?',
-                [accountId]
-            );
+    //         if (deleteResult.affectedRows === 0) {
+    //             await connection.rollback();
+    //             return ErrorHandler.notFound(req, res, 'Account not found');
+    //         }
 
-            if (deleteResult.affectedRows === 0) {
-                await connection.rollback();
-                return ErrorHandler.notFound(req, res, 'Account not found');
-            }
-
-            await connection.commit();
-            res.send({
-                message: 'Account and all related data successfully deleted',
-            });
-        } catch (error) {
-            await connection.rollback();
-            return ErrorHandler.internalError(req, res, error);
-        } finally {
-            connection.release();
-        }
-    }
+    //         await connection.commit();
+    //         res.send({
+    //             message: 'Account and all related data successfully deleted',
+    //         });
+    //     } catch (error) {
+    //         await connection.rollback();
+    //         return ErrorHandler.internalError(req, res, error);
+    //     } finally {
+    //         connection.release();
+    //     }
+    // }
 }

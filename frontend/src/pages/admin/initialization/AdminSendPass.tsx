@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Alert, Button } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const AdminSendPass: React.FC = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-
+    const navigate = useNavigate();
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage('');
@@ -17,6 +17,9 @@ export const AdminSendPass: React.FC = () => {
                 'http://localhost:5000/admin/send-login-password'
             );
             setMessage(response.data.message);
+            if (response.data.message) {
+                navigate('/admin/login');
+            }
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 if (err.response) {
@@ -49,8 +52,8 @@ export const AdminSendPass: React.FC = () => {
                     Send login password
                 </Button>
             </form>
-            {message && <p style={{ color: 'green' }}>{message}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <Alert severity="success">{message && <p>{message}</p>}.</Alert>
+            <Alert severity="error">{error && <p>{error}</p>}</Alert>
         </div>
     );
 };

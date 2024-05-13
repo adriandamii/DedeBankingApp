@@ -4,7 +4,6 @@ import { Account } from '../../interfaces/account/account';
 import db from '../../database/config/database';
 import { RowDataPacket } from 'mysql2';
 import dotenv from 'dotenv';
-import { CustomJwtPayload } from '../../interfaces/token/token';
 import { generateUniqueNumber } from '../../utils/uniqueNumberGenerator';
 import ErrorHandler from '../../middleware/ErrorHandler';
 dotenv.config();

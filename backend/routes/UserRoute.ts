@@ -12,7 +12,7 @@ const userController = new UserController();
 const checkValidation = ErrorHandler.validationError;
 
 router.put(
-    '/set-pin',
+    '/set-pin/:token',
     Validator.validatePinNumber(),
     checkValidation,
     userController.setUserPin.bind(userController)
@@ -31,7 +31,7 @@ router.post(
 );
 
 router.put(
-    '/reset-pin',
+    '/reset-pin/:token',
     Validator.validateUserResetPin(),
     checkValidation,
     userController.resetPin.bind(userController)

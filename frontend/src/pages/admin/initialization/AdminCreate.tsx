@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button } from '@mui/material';
+import { Alert, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 export const AdminCreate: React.FC = () => {
@@ -46,8 +46,8 @@ export const AdminCreate: React.FC = () => {
                     Create Admin
                 </Button>
             </form>
-            {message && <p style={{ color: 'green' }}>{message}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <Alert severity="success">{message && <p>{message}</p>}.</Alert>
+            <Alert severity="error">{error && <p>{error}</p>}</Alert>
         </div>
     );
 };

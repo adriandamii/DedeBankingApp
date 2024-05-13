@@ -21,8 +21,8 @@ const AdminTransactionHistory = () => {
 
     return (
         <div>
-            <GoBackRoute />
             <h1>Admin transaction history</h1>
+            <GoBackRoute />
             {status === 'loading' && <p>Loading...</p>}
             {status === 'failed' && <p>{error}</p>}
             {status === 'succeeded' && (

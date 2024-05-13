@@ -3,45 +3,69 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../../../app/store';
 import { fetchUsers } from '../../../../features/users/usersSlice';
 import User from '../../../../components/user/User';
-import { Button } from '@mui/material';
+import { Button, List, Pagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const UsersList: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { users, status, error } = useSelector(
+    const navigate = useNavigate();
+    const handleRouteCreateUser = () => {
+        navigate('/admin/create-user');
+    };
+    const handleRouteSearchUser = () => {
+        navigate('/search');
+    };
+    const { users, status, error, page, limit, totalPages } = useSelector(
         (state: RootState) => state.users
     );
-    const navigate = useNavigate();
-    const handleRouteCreateUser= () => {
-        navigate('/admin/create-user');
-    }
 
     useEffect(() => {
-        dispatch(fetchUsers());
-    }, [dispatch]);
+        dispatch(fetchUsers({ page, limit }));
+    }, [dispatch, page, limit]);
+
+    const handlePageChange = (_event: unknown, newPage: number) => {
+        dispatch(fetchUsers({ page: newPage, limit }));
+    };
+    handleRouteSearchUser;
 
     return (
         <div>
             <Button onClick={handleRouteCreateUser}>Create user</Button>
+            <Button onClick={handleRouteSearchUser}>Search user</Button>
+
             <h1>Users</h1>
             {status === 'loading' && <p>Loading...</p>}
             {status === 'failed' && <p>{error}</p>}
             {status === 'succeeded' && (
-                <ul>
-                    {users.map((user) => (
+                <List
+                    sx={{
+                        width: '100%',
+                        maxWidth: 360,
+                        bgcolor: 'background.paper',
+                    }}
+                >
+                    {users?.map((user) => (
                         <React.Fragment key={user.userId}>
-                            <User
-                                key={user.userId}
-                                userId={user.userId}
-                                firstName={user.firstName}
-                                lastName={user.lastName}
-                                email={user.email}
-                            />
-                            <hr></hr>
+                            {user && user?.userRole !== 'admin' && (
+                                <User
+                                    key={user.userId}
+                                    userId={user.userId}
+                                    firstName={user.firstName}
+                                    lastName={user.lastName}
+                                    email={user.email}
+                                />
+                            )}
                         </React.Fragment>
                     ))}
-                </ul>
+                </List>
             )}
+            <Pagination
+                count={totalPages}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                variant="outlined"
+            />
         </div>
     );
 };

@@ -23,8 +23,8 @@ const navigate = useNavigate();
 
     return (
         <div>
-            <GoBackRoute />
             <h1>Create Account for User ID: {userId}</h1>
+            <GoBackRoute />
             <form onSubmit={handleSubmit}>
                 <label>
                     Initial Amount:

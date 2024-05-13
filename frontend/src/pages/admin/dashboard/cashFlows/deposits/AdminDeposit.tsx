@@ -15,8 +15,8 @@ const AdminDeposit = () => {
     };
     return (
         <div>
-            <GoBackRoute />
             <h1>Admin Deposit page</h1>
+            <GoBackRoute />
             <h2>You are on uniqueAccountNumber {uniqueAccountNumber}</h2>
             <Button onClick={handleRouteDepositAction}>Make a deposit</Button>
 

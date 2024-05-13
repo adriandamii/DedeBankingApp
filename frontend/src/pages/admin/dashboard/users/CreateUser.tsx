@@ -19,8 +19,8 @@ const CreateUser = () => {
 
   return (
     <div>
-      <GoBackRoute />
       <h1>Create User</h1>
+      <GoBackRoute />
       <form onSubmit={handleSubmit}>
         <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
         <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" required />

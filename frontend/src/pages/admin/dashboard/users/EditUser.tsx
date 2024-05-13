@@ -22,8 +22,8 @@ const EditUser = () => {
 
   return (
     <div>
-      <GoBackRoute />
       <h1>Edit User</h1>
+      <GoBackRoute />
       <form onSubmit={handleSubmit}>
         <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" required />
         <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" required />

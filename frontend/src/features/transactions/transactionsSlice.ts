@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 interface Transaction {
-   transactionId: number;
+    transactionId: number;
     senderAccountNumber: string;
     receiverAccountNumber: string;
     transactionAmount: number;
@@ -16,7 +16,7 @@ interface TransactionState {
 }
 
 const initialState: TransactionState = {
-   transactions: [],
+    transactions: [],
     transaction: null,
     status: 'idle',
     error: null,

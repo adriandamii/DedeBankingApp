@@ -9,6 +9,12 @@ const checkValidation = ErrorHandler.validationError;
 
 const adminController = new AdminController();
 
+//router.get('/account'),
+    //Validator.validateAccountId(),
+    //checkValidation,
+    //RoleChecker.isAdmin,
+    //adminController.deleteAccount.bind(adminController);
+
 router.post('/create-admin', adminController.createAdmin.bind(adminController));
 
 router.post(
@@ -35,22 +41,20 @@ router.get(
     RoleChecker.isAdmin,
     adminController.getUsersList.bind(adminController)
 );
-
-
+router.get(
+    '/search',
+    checkValidation,
+    RoleChecker.isAdmin,
+    adminController.searchUserByIdentityId.bind(adminController)
+);
 
 router.delete(
-    '/delete/:userId',
+    '/delete/user/:userId',
     Validator.validateUserId(),
     checkValidation,
     RoleChecker.isAdmin,
     adminController.deleteUser.bind(adminController)
 );
-
-router.delete('/account/:accountId'),
-    Validator.validateAccountId(),
-    checkValidation,
-    RoleChecker.isAdmin,
-    adminController.deleteAccount.bind(adminController);
 
 router.put(
     '/user-edit/:userId',

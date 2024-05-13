@@ -5,14 +5,13 @@ import accountsSlice from '../features/accounts/accountsSlice';
 import cashFlowsSlice from '../features/cashFlows/cashFlowsSlice';
 import transactionsSlice from '../features/transactions/transactionsSlice';
 
-
 export const store = configureStore({
     reducer: {
         auth: authReducer,
         users: usersSlice,
         accounts: accountsSlice,
         cashFlows: cashFlowsSlice,
-        transactions: transactionsSlice
+        transactions: transactionsSlice,
     },
 });
 

@@ -4,10 +4,10 @@ import { Button } from '@mui/material';
 
 const Navbar: React.FC = () => {
     const { isLoggedIn, user } = useAuth();
-    console.log(isLoggedIn);
+
     return (
         <nav>
-            {isLoggedIn && <p>Hello {user?.userRole}</p>}
+            {isLoggedIn && <p>You are logged in as {user?.userRole}</p>}
             <Button>
                 <Link to="/admin/dashboard">Dasbhoard</Link>
             </Button>

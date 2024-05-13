@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, TextField } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Alert, Button, TextField } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const AdminLogin: React.FC = () => {
     const [loginPassword, setLoginPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-
+    const navigate = useNavigate();
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage('');
@@ -24,6 +24,7 @@ export const AdminLogin: React.FC = () => {
                 }
             );
             setMessage(response.data.message);
+            navigate('/admin/dashboard')
          } catch (err) {
             console.log(err);
             if (axios.isAxiosError(err)) {
@@ -63,8 +64,8 @@ export const AdminLogin: React.FC = () => {
                     Login
                 </Button>
             </form>
-            {message && <p style={{ color: 'green' }}>{message}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <Alert severity="success">{message && <p>{message}</p>}.</Alert>
+            <Alert severity="error">{error && <p>{error}</p>}</Alert>
         </div>
     );
 };

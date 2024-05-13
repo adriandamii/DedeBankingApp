@@ -13,8 +13,8 @@ const AdminTransaction = () => {
     };
     return (
         <div>
-            <GoBackRoute />
             <h1>Transaction admin page</h1>
+            <GoBackRoute />
             <h2>You are on uniqueAccountNumber {uniqueAccountNumber}</h2>
             <Button onClick={handleRouteTransactionAction}>
                 Make a transaction

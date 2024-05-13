@@ -151,7 +151,6 @@ class Validator {
     }
     static validateUserResetPin() {
         return [
-            body('token').notEmpty().withMessage('Token is required'),
             body('pinNumber')
                 .trim()
                 .notEmpty()
@@ -220,13 +219,6 @@ class Validator {
     }
     static validatePinNumber() {
         return [
-            body('identityId')
-                .trim()
-                .notEmpty()
-                .withMessage('Identity ID is required')
-                .isNumeric()
-                .withMessage('Identity ID must be numeric')
-                .escape(),
             body('pinNumber')
                 .trim()
                 .notEmpty()

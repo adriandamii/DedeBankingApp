@@ -16,7 +16,7 @@ const initialState: AccountsState = {
     error: null,
 };
 
-interface CreateAccount  {
+interface CreateAccount {
     userId: string;
     amount: string;
 }
@@ -77,7 +77,7 @@ export const createAccount = createAsyncThunk<
     Account,
     CreateAccount,
     { rejectValue: FetchAccountsError }
->('accounts/createAccount', async ({amount, userId}, { rejectWithValue }) => {
+>('accounts/createAccount', async ({ amount, userId }, { rejectWithValue }) => {
     try {
         const response = await axios.post(
             `http://localhost:5000/account/create-account/${userId}`,
@@ -98,6 +98,30 @@ export const createAccount = createAsyncThunk<
         }
         return rejectWithValue({
             errorMessage: 'Failed to create account',
+        });
+    }
+});
+
+export const deleteAccount = createAsyncThunk<
+    Account,
+    string,
+    { rejectValue: FetchAccountsError }
+>('acounts/deleteAccount', async (accountId: string, { rejectWithValue }) => {
+    try {
+        const response = await axios.delete(
+            `http://localhost:5000/admin/delete/account/${accountId}`,
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errors = error.response.data.errors;
+            if (errors && errors.length > 0) {
+                return rejectWithValue({ errorMessage: errors.join(', ') });
+            }
+        }
+        return rejectWithValue({
+            errorMessage: 'Failed to delete account',
         });
     }
 });
@@ -149,6 +173,19 @@ const accountsSlice = createSlice({
                 state.status = 'failed';
                 state.error =
                     action.payload?.errorMessage || 'Unknown error occurred';
+            })
+            .addCase(deleteAccount.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(deleteAccount.fulfilled, (state) => {
+                state.status = 'succeeded';
+                state.account = null;
+            })
+            .addCase(deleteAccount.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error =
+                    action.payload?.errorMessage || 'Unknown error occurred';
+            
             });
     },
 });

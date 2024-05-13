@@ -24,8 +24,8 @@ const AdminTransactionAction: React.FC = () => {
 
     return (
         <div>
-            <GoBackRoute />
             <h1>Transaction Action</h1>
+            <GoBackRoute />
             <h2>Account ID: {accountId}</h2>
             <form onSubmit={handleTransaction}>
             <input

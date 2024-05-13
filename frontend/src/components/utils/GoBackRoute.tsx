@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 const GoBackRoute = () => {
     const navigate = useNavigate();
     const handleRouteBack = () => {
@@ -8,7 +8,7 @@ const GoBackRoute = () => {
     };
     return (
         <>
-            <Button onClick={handleRouteBack}>Go Back</Button>
+            <Button onClick={handleRouteBack}><ArrowBackIosNewRoundedIcon/></Button>
         </>
     );
 };

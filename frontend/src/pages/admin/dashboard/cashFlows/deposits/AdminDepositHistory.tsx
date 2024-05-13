@@ -20,8 +20,8 @@ const AdminDepositHistory = () => {
   }, [dispatch, uniqueAccountNumber]);
   return (
     <div>
-      <GoBackRoute/>
       <h1>Admin deposit history</h1>
+      <GoBackRoute/>
            {status === 'loading' && <p>Loading...</p>}
            {status === 'failed' && <p>{error}</p>}
            {status === 'succeeded' && (

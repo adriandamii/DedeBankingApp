@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@mui/material';
-import {useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../../../app/store';
 import { fetchAccountDetails } from '../../../../features/accounts/accountsSlice';
 import GoBackRoute from '../../../../components/utils/GoBackRoute';
@@ -18,7 +18,7 @@ const AccountDetails = () => {
             dispatch(fetchAccountDetails(accountId));
         }
     }, [dispatch, accountId]);
-    
+
     const navigate = useNavigate();
     const handleRouteWithdrawal = () => {
         navigate(`/admin/account/${account?.uniqueAccountNumber}/withdrawal`);
@@ -30,12 +30,35 @@ const AccountDetails = () => {
         navigate(`/admin/account/${account?.uniqueAccountNumber}/transaction`);
     };
     const handleRouteCashFlowHistory = () => {
-        navigate(`/admin/account/${account?.uniqueAccountNumber}/cashflow-history`);
+        navigate(
+            `/admin/account/${account?.uniqueAccountNumber}/cashflow-history`
+        );
     };
+    console.log(account);
+    
+    // const handleDeleteAccount = () => {
+    //     console.log(account?.uniqueAccountNumber);
+    //     if (account?.uniqueAccountNumber) {
+    //         if (
+    //             window.confirm('Are you sure you want to delete this account?')
+    //         ) {
+    //             dispatch(deleteAccount(accountId!))
+    //                 .unwrap()
+    //                 .then(() => {
+    //                     alert('Account deleted successfully');
+    //                     navigate(-1);
+    //                 })
+    //                 .catch((error: string) => {
+    //                     alert('Failed to delete account: ' + error);
+    //                 });
+    //         }
+    //     }
+    // };
+
     return (
-        <div>
+        <>
             <h1>Account Details</h1>
-            <GoBackRoute/>
+            <GoBackRoute />
             <Button onClick={handleRouteTransaction} color="error">
                 Transaction
             </Button>
@@ -44,6 +67,13 @@ const AccountDetails = () => {
             </Button>
             <Button onClick={handleRouteDeposit} color="secondary">
                 Deposit
+            </Button>
+            <Button
+                //onClick={handleDeleteAccount}
+                variant="contained"
+                color="error"
+            >
+                Delete Account
             </Button>
             <Button onClick={handleRouteCashFlowHistory} color="secondary">
                 Withdrawal/Deposit History
@@ -55,10 +85,9 @@ const AccountDetails = () => {
                     <p>Account ID: {account.accountId}</p>
                     <p>Balance: {account.amount}</p>
                     <p>Unique Account Number: {account.uniqueAccountNumber}</p>
-
                 </div>
             )}
-        </div>
+        </>
     );
 };
 
