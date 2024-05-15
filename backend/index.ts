@@ -18,7 +18,7 @@ import { authenticateToken } from './middleware/auth';
 dotenv.config();
 
 const app = express();
-const PORT = 5000;
+ const PORT = 5000;
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -43,7 +43,6 @@ app.use('/account', accountRoutes);
 app.use('/transaction', transactionRoutes);
 app.use('/cash-flows', cashFlowsRoutes);
 app.use('/admin', adminRoutes);
-// app.delete('/gigi/delete/account/:accountId', async (req: Request, res: Response) => {
 //     const adminUserRole = (req as any).user.userRole;
 //     const { accountId } = req.params;
 

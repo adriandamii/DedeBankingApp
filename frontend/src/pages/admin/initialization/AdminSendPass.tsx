@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Alert, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useAuth } from '../../../hooks/useAuth';
 
 export const AdminSendPass: React.FC = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const Toast = () => toast.success('Email sent!');
+
     const navigate = useNavigate();
+    const {user} = useAuth();
+    useEffect(() => {
+        if (user?.userRole === 'customer' && location.pathname === '/admin/create') {
+            navigate(`/users/${user?.userId}`);
+        }
+    }, [navigate, user]);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage('');
@@ -18,6 +28,7 @@ export const AdminSendPass: React.FC = () => {
             );
             setMessage(response.data.message);
             if (response.data.message) {
+                Toast();
                 navigate('/admin/login');
             }
         } catch (err) {
@@ -37,23 +48,19 @@ export const AdminSendPass: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className='login-container'>
+            <form onSubmit={handleSubmit} className='login-form'>
             <h2>Send login password</h2>
             <span>
-                Did you receive the login password? Check the email and go to{' '}
-                <Link to={`/admin/login`}>Login admin page</Link>
-                <br />
-                Go back to create admin{' '}
+                <Link to={`/admin/login`}>Login admin page</Link> {" "}
                 <Link to={`/admin/create`}>Create admin</Link>
             </span>
-            <br /> <br />
-            <form onSubmit={handleSubmit}>
                 <Button variant="outlined" type="submit">
                     Send login password
                 </Button>
             </form>
-            <Alert severity="success">{message && <p>{message}</p>}.</Alert>
-            <Alert severity="error">{error && <p>{error}</p>}</Alert>
+            {message && <Alert severity="success"> <p>{message}</p></Alert>}
+            {error && <Alert severity="error"> <p>{error}</p></Alert>}
         </div>
     );
 };

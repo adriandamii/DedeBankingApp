@@ -2,20 +2,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 import GoBackRoute from '../../../../components/utils/GoBackRoute';
 import { Button } from '@mui/material';
 
-const AdminTransaction = () => {
+const Transaction = () => {
     const { uniqueAccountNumber } = useParams();
     const navigate = useNavigate();
     const handleRouteTransactionAction = () => {
-        navigate(`/admin/account/${uniqueAccountNumber}/transaction/action`);
+        navigate(`/account/${uniqueAccountNumber}/transaction/action`);
     };
     const handleRouteTransactionHistory = () => {
-        navigate(`/admin/account/${uniqueAccountNumber}/transaction/history`);
+        navigate(`/account/${uniqueAccountNumber}/transaction/history`);
     };
     return (
         <div>
-            <h1>Transaction admin page</h1>
+            <h1>Transaction page</h1>
             <GoBackRoute />
-            <h2>You are on uniqueAccountNumber {uniqueAccountNumber}</h2>
+            <h2>You are on {uniqueAccountNumber}</h2>
             <Button onClick={handleRouteTransactionAction}>
                 Make a transaction
             </Button>
@@ -26,4 +26,4 @@ const AdminTransaction = () => {
     );
 };
 
-export default AdminTransaction;
+export default Transaction;

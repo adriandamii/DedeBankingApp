@@ -1,26 +1,30 @@
-import { useParams } from 'react-router-dom';
+import React, { useEffect } from 'react'
 import GoBackRoute from '../../../../../components/utils/GoBackRoute'
-import { AppDispatch, RootState } from '../../../../../app/store';
-import { useDispatch, useSelector } from 'react-redux';
-import React, { useEffect } from 'react';
-import { fetchDeposits } from '../../../../../features/cashFlows/cashFlowsSlice';
 import CashFlow from '../../../../../components/cashFlow/CashFlow';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../../../app/store';
+import { fetchWithdrawals, resetStatus } from '../../../../../features/cashFlows/cashFlowsSlice';
 
-const AdminDepositHistory = () => {
+const WithdrawalHistory = () => {
   const { uniqueAccountNumber } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
-  const { cashFlows, status, error } = useSelector(
-      (state: RootState) => state.cashFlows
-  );
-  console.log(uniqueAccountNumber);
-  useEffect(() => {
-       if (uniqueAccountNumber) {
-           dispatch(fetchDeposits(uniqueAccountNumber));
-       }
-  }, [dispatch, uniqueAccountNumber]);
+   const dispatch = useDispatch<AppDispatch>();
+   const { cashFlows, status, error } = useSelector(
+       (state: RootState) => state.cashFlows
+   );
+
+useEffect(() => {
+    if (uniqueAccountNumber) {
+        dispatch(fetchWithdrawals(uniqueAccountNumber));
+    }
+    dispatch(resetStatus());
+    return () => {
+        dispatch(resetStatus());
+    };
+   }, [dispatch, uniqueAccountNumber]);
   return (
     <div>
-      <h1>Admin deposit history</h1>
+      <h1>Withdrawal history</h1>
       <GoBackRoute/>
            {status === 'loading' && <p>Loading...</p>}
            {status === 'failed' && <p>{error}</p>}
@@ -44,4 +48,4 @@ const AdminDepositHistory = () => {
   )
 }
 
-export default AdminDepositHistory
+export default WithdrawalHistory

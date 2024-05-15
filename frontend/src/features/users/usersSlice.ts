@@ -81,10 +81,13 @@ export const fetchUsers = createAsyncThunk<
                 const errors = error.response.data.errors;
                 if (errors && errors.length > 0) {
                     return rejectWithValue({ errorMessage: errors.join(', ') });
+                } else {
+                    const errorMessage = error.response.data.message;
+                    return rejectWithValue({ errorMessage });
                 }
             }
             return rejectWithValue({
-                errorMessage: 'Failed to fetch users',
+                errorMessage: 'Failed',
             });
         }
     }
@@ -106,10 +109,13 @@ export const fetchUserDetails = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to feth user details',
+            errorMessage: 'Failed',
         });
     }
 });
@@ -133,10 +139,13 @@ export const createUser = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to create user',
+            errorMessage: 'Failed',
         });
     }
 });
@@ -158,10 +167,13 @@ export const editUser = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to edit user',
+            errorMessage: 'Failed',
         });
     }
 });
@@ -182,10 +194,13 @@ export const deleteUser = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to delete user',
+            errorMessage: 'Failed',
         });
     }
 });
@@ -206,10 +221,13 @@ export const setUserPin = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to set user pin',
+            errorMessage: 'Failed',
         });
     }
 });
@@ -230,10 +248,13 @@ export const forgotPin = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to delete user',
+            errorMessage: 'Failed',
         });
     }
 });
@@ -256,10 +277,13 @@ export const requestResetPin = createAsyncThunk<
                 const errors = error.response.data.errors;
                 if (errors && errors.length > 0) {
                     return rejectWithValue({ errorMessage: errors.join(', ') });
+                } else {
+                    const errorMessage = error.response.data.message;
+                    return rejectWithValue({ errorMessage });
                 }
             }
             return rejectWithValue({
-                errorMessage: 'Failed to delete user',
+                errorMessage: 'Failed',
             });
         }
     }
@@ -268,7 +292,12 @@ export const requestResetPin = createAsyncThunk<
 const usersSlice = createSlice({
     name: 'users',
     initialState,
-    reducers: {},
+    reducers: {
+        resetStatus(state) {
+            state.status = 'idle';
+            state.error = null;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchUsers.pending, (state) => {
@@ -377,5 +406,6 @@ const usersSlice = createSlice({
         });
     },
 });
+export const { resetStatus } = usersSlice.actions;
 
 export default usersSlice.reducer;

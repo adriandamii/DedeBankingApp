@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Alert, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../hooks/useAuth';
 
 export const AdminCreate: React.FC = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    
+    const {user} = useAuth();
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (user?.userRole === 'customer' && location.pathname === '/admin/create') {
+            navigate(`/users/${user?.userId}`);
+        }
+    }, [navigate, user]);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage('');

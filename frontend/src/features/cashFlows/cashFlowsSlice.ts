@@ -42,10 +42,13 @@ export const fetchCashFlows = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to fetch cash flow',
+            errorMessage: 'Failed',
         });
     }
 });
@@ -66,10 +69,13 @@ export const fetchWithdrawals = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to fetch withdrawals',
+            errorMessage: 'Failed',
         });
     }
 });
@@ -90,10 +96,13 @@ export const fetchDeposits = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to fetch deposits',
+            errorMessage: 'Failed to create account',
         });
     }
 });
@@ -126,10 +135,13 @@ export const makeWithdrawal = createAsyncThunk<
                 const errors = error.response.data.errors;
                 if (errors && errors.length > 0) {
                     return rejectWithValue({ errorMessage: errors.join(', ') });
+                } else {
+                    const errorMessage = error.response.data.message;
+                    return rejectWithValue({ errorMessage });
                 }
             }
             return rejectWithValue({
-                errorMessage: 'Failed to make withdrawal',
+                errorMessage: 'Failed',
             });
         }
     }
@@ -163,10 +175,13 @@ export const makeDeposit = createAsyncThunk<
                 const errors = error.response.data.errors;
                 if (errors && errors.length > 0) {
                     return rejectWithValue({ errorMessage: errors.join(', ') });
+                } else {
+                    const errorMessage = error.response.data.message;
+                    return rejectWithValue({ errorMessage });
                 }
             }
             return rejectWithValue({
-                errorMessage: 'Failed to make deposit',
+                errorMessage: 'Failed',
             });
         }
     }
@@ -175,8 +190,12 @@ export const makeDeposit = createAsyncThunk<
 const cashFlowSlice = createSlice({
     name: 'cashFlows',
     initialState,
-    reducers: {},
-    extraReducers: (builder) => {
+    reducers: {
+        resetStatus(state) {
+            state.status = 'idle';
+            state.error = null;
+        },
+    },    extraReducers: (builder) => {
         builder
             .addCase(fetchCashFlows.pending, (state) => {
                 state.status = 'loading';
@@ -203,10 +222,9 @@ const cashFlowSlice = createSlice({
                     state.cashFlows = action.payload;
                 }
             )
-            .addCase(fetchWithdrawals.rejected, (state, action) => {
+            .addCase(fetchWithdrawals.rejected, (state, action: PayloadAction<FetchCashFlowError | undefined>) => {
                 state.status = 'failed';
-                state.error =
-                    action.payload?.errorMessage || 'Unknown error occurred';
+                state.error = action.payload?.errorMessage || 'Unknown error occurred';
             })
             .addCase(fetchDeposits.pending, (state) => {
                 state.status = 'loading';
@@ -255,5 +273,6 @@ const cashFlowSlice = createSlice({
             });
     },
 });
+export const { resetStatus } = cashFlowSlice.actions;
 
 export default cashFlowSlice.reducer;

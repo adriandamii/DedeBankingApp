@@ -15,7 +15,7 @@ const User: React.FC<UserProps> = ({ userId, firstName, lastName, email }) => {
     const handleClick = () => {
         navigate(`/users/${userId}`);
     };
-    const fullName = firstName + lastName;
+    const fullName = firstName + " " + lastName;
     return (
         <ListItem onClick={handleClick} style={{ cursor: 'pointer' }}>
             <ListItemAvatar>

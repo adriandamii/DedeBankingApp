@@ -48,10 +48,13 @@ export const fetchTransactions = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to fetch transactions',
+            errorMessage: 'Failed to create account',
         });
     }
 });
@@ -75,10 +78,13 @@ export const createTransaction = createAsyncThunk<
                 const errors = error.response.data.errors;
                 if (errors && errors.length > 0) {
                     return rejectWithValue({ errorMessage: errors.join(', ') });
+                } else {
+                    const errorMessage = error.response.data.message;
+                    return rejectWithValue({ errorMessage });
                 }
             }
             return rejectWithValue({
-                errorMessage: 'Failed to create transaction',
+                errorMessage: 'Failed to create account',
             });
         }
     }
@@ -87,8 +93,12 @@ export const createTransaction = createAsyncThunk<
 const transactionsSlice = createSlice({
     name: 'transactions',
     initialState,
-    reducers: {},
-    extraReducers: (builder) => {
+    reducers: {
+        resetStatus(state) {
+            state.status = 'idle';
+            state.error = null;
+        },
+    },    extraReducers: (builder) => {
         builder
             .addCase(createTransaction.pending, (state) => {
                 state.status = 'loading';
@@ -122,5 +132,6 @@ const transactionsSlice = createSlice({
            });
     },
 });
+export const { resetStatus } = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

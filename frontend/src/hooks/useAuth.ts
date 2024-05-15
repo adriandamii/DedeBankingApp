@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkAuthStatus } from '../features/auth/authService';
 import { RootState, AppDispatch } from '../app/store';
+import { checkAuthStatus } from '../features/auth/authSlice';
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -11,7 +11,8 @@ export const useAuth = () => {
     if (status === 'idle') {
       dispatch(checkAuthStatus());
     }
-  }, [dispatch, status]);
+
+  }, [dispatch, isLoggedIn, status]);
 
   return { isLoggedIn, user, status };
 };

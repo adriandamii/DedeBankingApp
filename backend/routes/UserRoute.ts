@@ -22,6 +22,8 @@ router.post(
     '/login-customer',
     userController.loginCustomer.bind(userController)
 );
+router.post('/logout', userController.logout.bind(userController)); // Add the logout route
+
 
 router.post(
     '/forgot-pin',

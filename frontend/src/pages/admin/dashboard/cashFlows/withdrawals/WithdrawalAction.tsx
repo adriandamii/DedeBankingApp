@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import GoBackRoute from '../../../../../components/utils/GoBackRoute';
 import { AppDispatch, RootState } from '../../../../../app/store';
-import { makeWithdrawal } from '../../../../../features/cashFlows/cashFlowsSlice';
+import { makeWithdrawal, resetStatus } from '../../../../../features/cashFlows/cashFlowsSlice';
+import { Button, TextField } from '@mui/material';
 
-const AdminWithdrawalAction = () => {
+const WithdrawalAction = () => {
     const { uniqueAccountNumber } = useParams();
     const dispatch = useDispatch<AppDispatch>();
     const { status, error } = useSelector(
@@ -13,7 +14,13 @@ const AdminWithdrawalAction = () => {
     );
     const [amount, setAmount] = useState('');
     const [type] = useState('withdrawal');
-    console.log('check the params', uniqueAccountNumber);
+
+    useEffect(() => {
+        dispatch(resetStatus());
+        return () => {
+            dispatch(resetStatus());
+        };
+    }, [dispatch]);
     const handleWithdrawal = (event: { preventDefault: () => void }) => {
         event.preventDefault();
         if (uniqueAccountNumber) {
@@ -26,28 +33,26 @@ const AdminWithdrawalAction = () => {
             );
         }
     };
-    console.log('uniqueAccountNumber', uniqueAccountNumber);
-    console.log('cashFlowAmount', amount);
-    console.log('cashFlowType', type);
 
     return (
-        <div>
+        <div className='login-container'>
+            <form onSubmit={handleWithdrawal} className='form-container'>
             <h1>Withdrawal Action</h1>
             <GoBackRoute />
-            <h2>Account ID: {uniqueAccountNumber}</h2>
-            <form onSubmit={handleWithdrawal}>
-                <input
+                <TextField
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="Amount"
                 />
-                <button type="submit">Withdraw</button>
-            </form>
+                <Button type="submit">Withdraw</Button>
             {status === 'loading' && <p>Processing...</p>}
             {status === 'failed' && <p>{error}</p>}
+            {status === 'succeeded' && <p>Successfully withdrawal</p>}
+            </form>
+
         </div>
     );
 };
 
-export default AdminWithdrawalAction;
+export default WithdrawalAction;

@@ -20,7 +20,7 @@ export class TransactionController {
                 accountQuery,
                 [senderAccountNumber]
             );
-            if (accountResults[0].userId !== userId && userRole !== "admin") {
+            if (accountResults[0].userId !== userId && userRole !== 'admin') {
                 return ErrorHandler.unauthorized(req, res, 'Access denied');
             }
             const transactionQuery =
@@ -30,10 +30,9 @@ export class TransactionController {
                 [senderAccountNumber]
             );
             if (transactionResults.length > 0) {
-                console.log(transactionResults)
                 res.json(transactionResults);
             } else {
-                return ErrorHandler.notFound(
+                return ErrorHandler.conflict(
                     req,
                     res,
                     'Transactions not found.'
@@ -90,7 +89,7 @@ export class TransactionController {
         );
         const userId = (req as any).user.userId;
         const userRole = (req as any).user.userRole;
-
+        const comission = 10;
         if (
             !transaction.senderAccountNumber ||
             !transaction.receiverAccountNumber ||
@@ -98,13 +97,22 @@ export class TransactionController {
         ) {
             return ErrorHandler.badRequest(req, res, 'Missing required fields');
         }
+        if (
+            transaction.senderAccountNumber === transaction.receiverAccountNumber
+        ) {
+            return ErrorHandler.unauthorized(
+                req,
+                res,
+                'The accounts must be different'
+            );
+        }
         const connection = await db.getConnection();
 
         try {
             await connection.beginTransaction();
 
             const [account] = await connection.query<RowDataPacket[]>(
-                'SELECT accountId, userId FROM accounts WHERE uniqueAccountNumber = ?',
+                'SELECT accountId, userId, amount FROM accounts WHERE uniqueAccountNumber = ?',
                 [transaction.senderAccountNumber]
             );
 
@@ -117,7 +125,7 @@ export class TransactionController {
                 );
             }
 
-            if (account[0].userId !== userId && userRole !== "admin") {
+            if (account[0].userId !== userId && userRole !== 'admin') {
                 await connection.rollback();
                 return ErrorHandler.unauthorized(
                     req,
@@ -126,12 +134,27 @@ export class TransactionController {
                 );
             }
 
-            const senderAccountId = account[0].accountId;
+            if (Number(account[0].amount) < Number(transaction.transactionAmount)) {
+                return ErrorHandler.badRequest(req, res, "Insufficient amount for this transaction with 0 comission")
+            }
 
+            const [verifyExisting] = await db.query<RowDataPacket[]>('SELECT uniqueAccountNumber FROM accounts WHERE uniqueAccountNumber = ?', transaction.receiverAccountNumber)
+            if (verifyExisting.length === 0) {
+                if (Number(account[0].amount) < Number(transaction.transactionAmount) + comission) {
+                    return ErrorHandler.badRequest(req, res, "Insufficient amount for this transaction with comission")
+                }
+                await db.query(
+                    'UPDATE accounts SET amount = amount - ? WHERE uniqueAccountNumber = ?',
+                    [comission, transaction.senderAccountNumber]
+                );
+            }
+
+            const senderAccountId = account[0].accountId;
             await db.query(
                 'UPDATE accounts SET amount = amount - ? WHERE uniqueAccountNumber = ?',
                 [transaction.transactionAmount, transaction.senderAccountNumber]
             );
+            
             await db.query(
                 'UPDATE accounts SET amount = amount + ? WHERE uniqueAccountNumber = ?',
                 [
@@ -149,6 +172,10 @@ export class TransactionController {
                 ]
             );
             await connection.commit();
+            if (verifyExisting.length === 0) {
+                res.send({ message: 'Transaction successful with 10 comission' });
+                return
+            }
             res.send({ message: 'Transaction successful' });
         } catch (error) {
             await connection.rollback();

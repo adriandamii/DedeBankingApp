@@ -2,20 +2,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 import GoBackRoute from '../../../../../components/utils/GoBackRoute';
 import { Button } from '@mui/material';
 
-const AdminDeposit = () => {
+const Deposit = () => {
     const { uniqueAccountNumber } = useParams();
 
     <h2>You are on uniqueAccountNumber {uniqueAccountNumber}</h2>;
     const navigate = useNavigate();
     const handleRouteDepositAction = () => {
-        navigate(`/admin/account/${uniqueAccountNumber}/deposit/action`);
+        navigate(`/account/${uniqueAccountNumber}/deposit/action`);
     };
     const handleRouteDepositHistory = () => {
-        navigate(`/admin/account/${uniqueAccountNumber}/Deposit/history`);
+        navigate(`/account/${uniqueAccountNumber}/Deposit/history`);
     };
     return (
         <div>
-            <h1>Admin Deposit page</h1>
+            <h1>Deposit page</h1>
             <GoBackRoute />
             <h2>You are on uniqueAccountNumber {uniqueAccountNumber}</h2>
             <Button onClick={handleRouteDepositAction}>Make a deposit</Button>
@@ -25,4 +25,4 @@ const AdminDeposit = () => {
     );
 };
 
-export default AdminDeposit;
+export default Deposit;

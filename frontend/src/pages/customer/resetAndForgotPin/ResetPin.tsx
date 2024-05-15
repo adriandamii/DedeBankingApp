@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../../app/store';
 import { requestResetPin } from '../../../features/users/usersSlice';
+import { Button, TextField } from '@mui/material';
 
 export default function ResetPin() {
    const {token} = useParams();
@@ -24,17 +25,17 @@ export default function ResetPin() {
     }
 
     return (
-        <div>
+        <div className='login-container'>
+            <form onSubmit={handleSubmit} className='login-form'>
             <h1>Reset Your PIN</h1>
-            <form onSubmit={handleSubmit}>
-                <input
+                <TextField
                     type="password"
                     value={pinNumber}
                     onChange={(e) => setPinNumber(e.target.value)}
                     placeholder="Enter your new PIN"
                     required
                 />
-                <button type="submit" disabled={status === 'loading'}>Reset PIN</button>
+                <Button type="submit" disabled={status === 'loading'}>Reset PIN</Button>
             </form>
             {error && <p>{error}</p>}
         </div>

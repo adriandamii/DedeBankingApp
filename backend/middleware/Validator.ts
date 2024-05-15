@@ -59,6 +59,7 @@ class Validator {
                 .isNumeric()
                 .withMessage('Account ID must be numeric')
                 .escape(),
+                
         ];
     }
     static validateUserForgotPassword() {
@@ -253,6 +254,8 @@ class Validator {
                 .trim()
                 .notEmpty()
                 .withMessage('Transaction amount is required')
+                .isInt({ min: 0 })
+                .withMessage("the amount must be positive")
                 .isNumeric()
                 .withMessage('Transaction amount must contains only numbers')
                 .isLength({ max: 7 })

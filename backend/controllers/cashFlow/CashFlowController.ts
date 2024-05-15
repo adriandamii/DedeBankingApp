@@ -38,7 +38,7 @@ export class CashFlowController {
             if (results.length > 0) {
                 res.json(results);
             } else {
-                return ErrorHandler.notFound(req, res, 'Cash flow not found');
+                return ErrorHandler.conflict(req, res, 'Cash flow not found');
             }
         } catch (error) {
             return ErrorHandler.internalError(req, res, error);
@@ -81,7 +81,7 @@ export class CashFlowController {
             if (results.length > 0) {
                 res.json(results);
             } else {
-                return ErrorHandler.notFound(
+                return ErrorHandler.conflict(
                     req,
                     res,
                     'Withdrawals not found.'
@@ -127,7 +127,7 @@ export class CashFlowController {
             if (results.length > 0) {
                 res.json(results);
             } else {
-                return ErrorHandler.notFound(req, res, 'Deposits not found.');
+                return ErrorHandler.conflict(req, res, 'Deposits not found.');
             }
         } catch (error) {
             return ErrorHandler.internalError(req, res, error);
@@ -159,7 +159,6 @@ export class CashFlowController {
             const currentBalance = ownershipResults[0].amount;
     
             if (Number(currentBalance) < Number(cashFlowAmount)) {
-                console.log(typeof currentBalance, " < ", typeof cashFlowAmount )
                 await connection.rollback();
                 return ErrorHandler.badRequest(req, res, 'Insufficient funds');
             }

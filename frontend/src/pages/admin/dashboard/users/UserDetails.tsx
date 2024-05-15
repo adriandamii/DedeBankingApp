@@ -2,20 +2,31 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../../app/store';
-import { deleteUser, fetchUserDetails } from '../../../../features/users/usersSlice';
+import {
+    deleteUser,
+    fetchUserDetails,
+    resetStatus,
+} from '../../../../features/users/usersSlice';
 import GoBackRoute from '../../../../components/utils/GoBackRoute';
 import { Button } from '@mui/material';
+import { useAuth } from '../../../../hooks/useAuth';
 
 export const UserDetails = () => {
     const { userId } = useParams();
     const dispatch = useDispatch<AppDispatch>();
-    const user = useSelector((state: RootState) => state.users.user);
-    const error = useSelector((state: RootState) => state.users.error);
+    const {user} = useAuth();
+    const userRole = user?.userRole;
+    const customer = useSelector((state: RootState) => state.users.user);
 
+    const error = useSelector((state: RootState) => state.users.error);
     useEffect(() => {
         if (userId) {
             dispatch(fetchUserDetails(userId));
         }
+        dispatch(resetStatus());
+        return () => {
+            dispatch(resetStatus());
+        };
     }, [dispatch, userId]);
 
     const navigate = useNavigate();
@@ -32,7 +43,7 @@ export const UserDetails = () => {
                 .unwrap()
                 .then(() => {
                     alert('User deleted successfully');
-                    navigate('/admin/users');
+                    navigate('/users');
                 })
                 .catch((error: string) => {
                     alert('Failed to delete user: ' + error);
@@ -45,18 +56,27 @@ export const UserDetails = () => {
             <h1>User Details</h1>
             <GoBackRoute />{' '}
             <span>
-                 <Button onClick={handleClick}>User Accounts</Button>
-                 <Button onClick={handleRouteEditUser}>Edit User</Button>
-                 <Button variant="contained" color="error" onClick={handleDeleteUser}>Delete User</Button>
-
+                <Button onClick={handleClick}>User Accounts</Button>
+                {userRole === 'admin' && (
+                    <>
+                        <Button onClick={handleRouteEditUser}>Edit User</Button>
+                        <Button
+                            variant="contained"
+                            color="error"
+                            onClick={handleDeleteUser}
+                        >
+                            Delete User
+                        </Button>
+                    </>
+                )}
             </span>
-            {user ? (
+            {customer ? (
                 <div>
-                    <p>ID: {user.userId}</p>
+                    <p>ID: {customer.userId}</p>
                     <p>
-                        Name: {user.firstName} {user.lastName}
+                        Name: {customer.firstName} {customer.lastName}
                     </p>
-                    <p>Email: {user.email}</p>
+                    <p>Email: {customer.email}</p>
                 </div>
             ) : (
                 <p>{error || 'Loading...'}</p>

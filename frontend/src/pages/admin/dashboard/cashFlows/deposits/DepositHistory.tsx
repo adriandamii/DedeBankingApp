@@ -1,26 +1,31 @@
-import React, { useEffect } from 'react'
-import GoBackRoute from '../../../../../components/utils/GoBackRoute'
-import CashFlow from '../../../../../components/cashFlow/CashFlow';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import GoBackRoute from '../../../../../components/utils/GoBackRoute'
 import { AppDispatch, RootState } from '../../../../../app/store';
-import { fetchWithdrawals } from '../../../../../features/cashFlows/cashFlowsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { fetchDeposits, resetStatus } from '../../../../../features/cashFlows/cashFlowsSlice';
+import CashFlow from '../../../../../components/cashFlow/CashFlow';
 
-const AdminWithdrawalHistory = () => {
+const DepositHistory = () => {
   const { uniqueAccountNumber } = useParams();
-   const dispatch = useDispatch<AppDispatch>();
-   const { cashFlows, status, error } = useSelector(
-       (state: RootState) => state.cashFlows
-   );
-   console.log(uniqueAccountNumber);
-   useEffect(() => {
-        if (uniqueAccountNumber) {
-            dispatch(fetchWithdrawals(uniqueAccountNumber));
-        }
-   }, [dispatch, uniqueAccountNumber]);
+  const dispatch = useDispatch<AppDispatch>();
+  const { cashFlows, status, error } = useSelector(
+      (state: RootState) => state.cashFlows
+  );
+
+useEffect(() => {
+    if (uniqueAccountNumber) {
+        dispatch(fetchDeposits(uniqueAccountNumber));
+    }
+    dispatch(resetStatus());
+    return () => {
+        dispatch(resetStatus());
+    };
+  }, [dispatch, uniqueAccountNumber]);
+
   return (
-    <div>
-      <h1>Admin withdrawal history</h1>
+    <div className='container'>
+      <h1>Deposit history</h1>
       <GoBackRoute/>
            {status === 'loading' && <p>Loading...</p>}
            {status === 'failed' && <p>{error}</p>}
@@ -44,4 +49,4 @@ const AdminWithdrawalHistory = () => {
   )
 }
 
-export default AdminWithdrawalHistory
+export default DepositHistory

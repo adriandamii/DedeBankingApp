@@ -37,7 +37,7 @@ export class UserController {
 
         if (
             requestingUser.userRole !== 'admin' &&
-            requestingUser.userId !== userId
+            requestingUser.userId !== Number(userId)
         ) {
             return ErrorHandler.unauthorized(
                 req,
@@ -53,7 +53,7 @@ export class UserController {
             if (results.length > 0) {
                 res.json(results);
             } else {
-                return ErrorHandler.notFound(
+                return ErrorHandler.conflict(
                     req,
                     res,
                     'No accounts found for this user.'
@@ -138,11 +138,18 @@ export class UserController {
         const secret_key = process.env.JWT_SECRET;
 
         try {
-            const decoded = jwt.verify(token, secret_key!) as ResetPinJwtPayload;
+            const decoded = jwt.verify(
+                token,
+                secret_key!
+            ) as ResetPinJwtPayload;
 
-        if (decoded.action !== 'reset-pin') {
-            return ErrorHandler.badRequest(req, res, 'Invalid token action.');
-        }
+            if (decoded.action !== 'reset-pin') {
+                return ErrorHandler.badRequest(
+                    req,
+                    res,
+                    'Invalid token action.'
+                );
+            }
             const saltRounds = 10;
             const hashedPin = await bcrypt.hash(pinNumber, saltRounds);
             await db.query('UPDATE users SET pinNumber = ? WHERE userId = ?', [
@@ -153,7 +160,11 @@ export class UserController {
             res.send({ message: 'PIN successfully reset.' });
         } catch (error) {
             if (error instanceof jwt.TokenExpiredError) {
-                return ErrorHandler.unauthorized(req, res, 'Token has expired, please request a new reset link.');
+                return ErrorHandler.unauthorized(
+                    req,
+                    res,
+                    'Token has expired, please request a new reset link.'
+                );
             } else if (error instanceof jwt.JsonWebTokenError) {
                 return ErrorHandler.unauthorized(req, res, 'Invalid token.');
             } else {
@@ -228,7 +239,22 @@ export class UserController {
                 httpOnly: true,
                 sameSite: 'strict',
             });
-            res.json({ message: 'Login successful!', token: token });
+            res.json({
+                userId: user[0].userId,
+                userRole: user[0].userRole,
+            });
+        } catch (error) {
+            return ErrorHandler.internalError(req, res, error);
+        }
+    }
+    async logout(req: Request, res: Response): Promise<void> {
+        try {
+            res.clearCookie('token', {
+                httpOnly: true,
+                sameSite: 'strict',
+            });
+
+            res.json({ message: 'Logout successful!' });
         } catch (error) {
             return ErrorHandler.internalError(req, res, error);
         }

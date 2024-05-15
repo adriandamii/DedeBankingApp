@@ -1,21 +1,26 @@
 import React, { useEffect } from "react";
 import GoBackRoute from "../../../../components/utils/GoBackRoute"
-import { fetchCashFlows } from "../../../../features/cashFlows/cashFlowsSlice";
+import { fetchCashFlows, resetStatus } from "../../../../features/cashFlows/cashFlowsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../app/store";
 import CashFlow from "../../../../components/cashFlow/CashFlow";
 import { useParams } from "react-router-dom";
 
-const AdminCashFlowHistory = () => {
+const CashFlowHistory = () => {
    const { uniqueAccountNumber } = useParams();
    const dispatch = useDispatch<AppDispatch>();
    const { cashFlows, status, error } = useSelector(
        (state: RootState) => state.cashFlows
    );
-   useEffect(() => {
-        if (uniqueAccountNumber !== undefined) {
-            dispatch(fetchCashFlows(uniqueAccountNumber));
-        }
+
+useEffect(() => {
+    if (uniqueAccountNumber !== undefined) {
+        dispatch(fetchCashFlows(uniqueAccountNumber));
+    }
+    dispatch(resetStatus());
+    return () => {
+        dispatch(resetStatus());
+    };
    }, [dispatch, uniqueAccountNumber]);
 
    return (
@@ -44,4 +49,4 @@ const AdminCashFlowHistory = () => {
    );
 };
 
-export default AdminCashFlowHistory
+export default CashFlowHistory

@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAccountsByUserId } from '../../../../features/accounts/accountsSlice';
+import { fetchAccountsByUserId, resetStatus } from '../../../../features/accounts/accountsSlice';
 import { AppDispatch, RootState } from '../../../../app/store';
 import Account from '../../../../components/account/Account';
 import GoBackRoute from '../../../../components/utils/GoBackRoute';
 import { Button } from '@mui/material';
+import { useAuth } from '../../../../hooks/useAuth';
 
 export const UserAccounts = () => {
     const { userId } = useParams();
@@ -13,11 +14,16 @@ export const UserAccounts = () => {
     const accounts = useSelector((state: RootState) => state.accounts.accounts);
     const status = useSelector((state: RootState) => state.accounts.status);
     const error = useSelector((state: RootState) => state.accounts.error);
-
+    const {user} = useAuth();
     useEffect(() => {
         if (userId) {
             dispatch(fetchAccountsByUserId(userId));
         }
+        dispatch(resetStatus());
+    
+        return () => {
+            dispatch(resetStatus());
+        };
     }, [dispatch, userId]);
     const navigate = useNavigate();
     const handleRouteCreateAccount = () => {
@@ -28,10 +34,11 @@ export const UserAccounts = () => {
         <div>
             <h1>Accounts for User ID: {userId}</h1>
             <GoBackRoute />
-
+            {user?.userRole === "admin" &&
             <Button onClick={handleRouteCreateAccount} color="error">
                 Create Account
             </Button>
+            } 
             {status === 'loading' && <p>Loading accounts...</p>}
             {status === 'failed' && <p>{error}</p>}
             {status === 'succeeded' && accounts.length > 0 && (

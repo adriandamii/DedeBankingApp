@@ -30,7 +30,7 @@ export const authenticateToken = (
 
     const token = req.cookies.token;
     if (!token) {
-        return ErrorHandler.unauthorized(req, res, 'Unauthorized access from middleware');
+        return ErrorHandler.unauthorized(req, res, 'You are not logged in');
     }
 
     const secret = process.env.JWT_SECRET;

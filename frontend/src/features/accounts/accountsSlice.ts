@@ -37,12 +37,16 @@ export const fetchAccountsByUserId = createAsyncThunk<
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-            const errorMessage =
-                error.response.data.message || 'Failed to fetch accounts';
-            return rejectWithValue({ errorMessage });
+            const errors = error.response.data.errors;
+            if (errors && errors.length > 0) {
+                return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
+            }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to fetch accounts',
+            errorMessage: 'Failed to create account',
         });
     }
 });
@@ -65,10 +69,13 @@ export const fetchAccountDetails = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
-            errorMessage: 'Failed to fetch account details',
+            errorMessage: 'Failed to create account',
         });
     }
 });
@@ -94,6 +101,9 @@ export const createAccount = createAsyncThunk<
             const errors = error.response.data.errors;
             if (errors && errors.length > 0) {
                 return rejectWithValue({ errorMessage: errors.join(', ') });
+            } else {
+                const errorMessage = error.response.data.message;
+                return rejectWithValue({ errorMessage });
             }
         }
         return rejectWithValue({
@@ -129,7 +139,12 @@ export const deleteAccount = createAsyncThunk<
 const accountsSlice = createSlice({
     name: 'accounts',
     initialState,
-    reducers: {},
+    reducers: {
+        resetStatus(state) {
+            state.status = 'idle';
+            state.error = null;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchAccountsByUserId.pending, (state) => {
@@ -185,9 +200,9 @@ const accountsSlice = createSlice({
                 state.status = 'failed';
                 state.error =
                     action.payload?.errorMessage || 'Unknown error occurred';
-            
             });
     },
 });
+export const { resetStatus } = accountsSlice.actions;
 
 export default accountsSlice.reducer;

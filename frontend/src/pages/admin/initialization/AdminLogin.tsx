@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Alert, Button, TextField } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useAuth } from '../../../hooks/useAuth';
 
 export const AdminLogin: React.FC = () => {
     const [loginPassword, setLoginPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+
+    const Toast = () => toast.success('Login successfull!');
+
     const navigate = useNavigate();
+    const {user} = useAuth();
+    useEffect(() => {
+        if (user?.userRole === 'customer' && location.pathname === '/admin/login') {
+            navigate(`/users/${user?.userId}`);
+        }
+    }, [navigate, user]);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage('');
@@ -24,9 +35,9 @@ export const AdminLogin: React.FC = () => {
                 }
             );
             setMessage(response.data.message);
-            navigate('/admin/dashboard')
+            Toast();
+            navigate('/users')
          } catch (err) {
-            console.log(err);
             if (axios.isAxiosError(err)) {
                if (err.response) {
                  console.error("Error data:", err.response.data);
@@ -44,14 +55,13 @@ export const AdminLogin: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className='login-container'>
+            <form onSubmit={handleSubmit} className='login-form'>
             <h2>Admin Login</h2>
             <span>
-                Forgot password?<br/> Request for one{' '}
+                Request for one{' '}
                 <Link to={`/admin/send-login-password`}>here</Link>
             </span>
-            <br /> <br />
-            <form onSubmit={handleSubmit}>
                 <TextField
                     label="Login Password"
                     type="password"
@@ -59,13 +69,12 @@ export const AdminLogin: React.FC = () => {
                     onChange={(e) => setLoginPassword(e.target.value)}
                     required
                 />
-                <br /> <br />
                 <Button variant="outlined" type="submit">
                     Login
                 </Button>
+            {message && <Alert severity="success"> <p>{message}</p></Alert>}
+            {error && <Alert severity="error"> <p>{error}</p></Alert>}
             </form>
-            <Alert severity="success">{message && <p>{message}</p>}.</Alert>
-            <Alert severity="error">{error && <p>{error}</p>}</Alert>
         </div>
     );
 };
