@@ -41,7 +41,8 @@ export const AdminCreate: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className='container'>
+
             <h2>Create Admin</h2>
             <span>
                 Did you create the admin user? Go to{' '}

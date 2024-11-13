@@ -64,6 +64,7 @@ const UsersList: React.FC = () => {
                                         firstName={user.firstName}
                                         lastName={user.lastName}
                                         email={user.email}
+                                        isActive= {user.isActive}
                                     />
                                 )}
                             </React.Fragment>

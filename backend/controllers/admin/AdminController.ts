@@ -311,7 +311,7 @@ export class AdminController {
                 sameSite: 'strict',
             });
 
-            res.json({ message: 'Login successful.' });
+            res.json({ userId: userId, userRole: userRole });
         } catch (error) {
             return ErrorHandler.internalError(req, res, error);
         }

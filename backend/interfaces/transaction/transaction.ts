@@ -5,4 +5,5 @@ export interface Transaction {
    senderAccountNumber:number;
    receiverAccountNumber: number;
    transactionToken?:string;
+   commission: number;
 }

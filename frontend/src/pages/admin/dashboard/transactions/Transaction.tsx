@@ -12,7 +12,8 @@ const Transaction = () => {
         navigate(`/account/${uniqueAccountNumber}/transaction/history`);
     };
     return (
-        <div>
+        <div className='container'>
+
             <h1>Transaction page</h1>
             <GoBackRoute />
             <h2>You are on {uniqueAccountNumber}</h2>

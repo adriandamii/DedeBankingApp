@@ -51,3 +51,22 @@ nav {
       padding: 20px;
   }
 }
+
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.transaction-table th, .transaction-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.transaction-table th {
+  background-color: #f4f4f4;
+}
+

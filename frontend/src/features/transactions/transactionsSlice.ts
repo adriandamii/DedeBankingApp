@@ -6,6 +6,7 @@ interface Transaction {
     senderAccountNumber: string;
     receiverAccountNumber: string;
     transactionAmount: number;
+    commission: number;
 }
 
 interface TransactionState {

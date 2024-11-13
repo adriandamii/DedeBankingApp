@@ -24,10 +24,10 @@ export class TransactionController {
                 return ErrorHandler.unauthorized(req, res, 'Access denied');
             }
             const transactionQuery =
-                'SELECT * FROM transactions WHERE senderAccountNumber = ?';
+                'SELECT * FROM transactions WHERE senderAccountNumber = ? OR receiverAccountNumber = ?';
             const [transactionResults] = await db.query<RowDataPacket[]>(
                 transactionQuery,
-                [senderAccountNumber]
+                [senderAccountNumber, senderAccountNumber]
             );
             if (transactionResults.length > 0) {
                 res.json(transactionResults);
@@ -89,7 +89,7 @@ export class TransactionController {
         );
         const userId = (req as any).user.userId;
         const userRole = (req as any).user.userRole;
-        const comission = 10;
+        transaction.commission = 0;
         if (
             !transaction.senderAccountNumber ||
             !transaction.receiverAccountNumber ||
@@ -140,12 +140,13 @@ export class TransactionController {
 
             const [verifyExisting] = await db.query<RowDataPacket[]>('SELECT uniqueAccountNumber FROM accounts WHERE uniqueAccountNumber = ?', transaction.receiverAccountNumber)
             if (verifyExisting.length === 0) {
-                if (Number(account[0].amount) < Number(transaction.transactionAmount) + comission) {
-                    return ErrorHandler.badRequest(req, res, "Insufficient amount for this transaction with comission")
+                transaction.commission = 10;
+                if (Number(account[0].amount) < Number(transaction.transactionAmount) + transaction.commission) {
+                    return ErrorHandler.badRequest(req, res, "Insufficient amount for this transaction with commission")
                 }
                 await db.query(
                     'UPDATE accounts SET amount = amount - ? WHERE uniqueAccountNumber = ?',
-                    [comission, transaction.senderAccountNumber]
+                    [transaction.commission, transaction.senderAccountNumber]
                 );
             }
 
@@ -163,12 +164,13 @@ export class TransactionController {
                 ]
             );
             await connection.query(
-                'INSERT INTO transactions (accountId, senderAccountNumber, receiverAccountNumber, transactionAmount) VALUES (?, ?, ?, ?)',
+                'INSERT INTO transactions (accountId, senderAccountNumber, receiverAccountNumber, transactionAmount, commission) VALUES (?, ?, ?, ?, ?)',
                 [
                     senderAccountId,
                     transaction.senderAccountNumber,
                     transaction.receiverAccountNumber,
                     transaction.transactionAmount,
+                    transaction.commission,
                 ]
             );
             await connection.commit();

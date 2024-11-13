@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import GoBackRoute from '../../../../components/utils/GoBackRoute';
 import { useParams } from 'react-router-dom';
-import { AppDispatch, RootState } from '../../../../app/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTransactions, resetStatus } from '../../../../features/transactions/transactionsSlice';
+import { AppDispatch, RootState } from '../../../../app/store';
+import {
+    fetchTransactions,
+    resetStatus,
+} from '../../../../features/transactions/transactionsSlice';
 import Transaction from '../../../../components/transactions/Transaction';
 
 const TransactionHistory = () => {
@@ -12,44 +15,48 @@ const TransactionHistory = () => {
     const { transactions, status, error } = useSelector(
         (state: RootState) => state.transactions
     );
+
     useEffect(() => {
-        if (uniqueAccountNumber !== undefined) {
-            dispatch(fetchTransactions(uniqueAccountNumber));
-        }
+        dispatch(fetchTransactions(uniqueAccountNumber!));
+        dispatch(resetStatus());
+        return () => {
             dispatch(resetStatus());
-            return () => {
-                dispatch(resetStatus());
-            };
+        };
     }, [dispatch, uniqueAccountNumber]);
 
     return (
-        <div>
-            <h1>Transaction history</h1>
+        <div className="container">
+            <h1>Transaction History</h1>
             <GoBackRoute />
             {status === 'loading' && <p>Loading...</p>}
             {status === 'failed' && <p>{error}</p>}
-            {status === 'succeeded' && (
-                <ul>
-                    {transactions.map((transaction) => (
-                        <React.Fragment key={transaction.transactionId}>
+            {status === 'succeeded' && transactions.length > 0 && (
+                <table className="transaction-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Sender</th>
+                            <th>Receiver</th>
+                            <th>Amount</th>
+                            <th>Commission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {transactions.map((transaction, index) => (
                             <Transaction
                                 key={transaction.transactionId}
-                                transactionId={transaction.transactionId}
-                                transactionAmount={
-                                    transaction.transactionAmount
-                                }
-                                senderAccountNumber={
-                                    transaction.senderAccountNumber
-                                }
-                                receiverAccountNumber={
-                                    transaction.receiverAccountNumber
-                                }
+                                transactionId={index + 1}
+                                senderAccountNumber={transaction.senderAccountNumber}
+                                receiverAccountNumber={transaction.receiverAccountNumber}
+                                transactionAmount={transaction.transactionAmount}
+                                commission={transaction.commission}
+                                uniqueAccountNumber={uniqueAccountNumber!}
                             />
-                            <hr></hr>
-                        </React.Fragment>
-                    ))}
-                </ul>
+                        ))}
+                    </tbody>
+                </table>
             )}
+            {status === 'succeeded' && transactions.length === 0 && <p>No transactions found.</p>}
         </div>
     );
 };

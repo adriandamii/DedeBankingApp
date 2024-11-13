@@ -17,8 +17,10 @@ const UserLogin = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (status === 'succeeded' && user?.userId) {
+        if (status === 'succeeded' && user?.userId && user?.userRole === 'customer') {
             navigate(`/users/${user.userId}`);
+        }else if (status === 'succeeded' && user?.userId && user?.userRole === 'admin') {
+            navigate(`/users`)
         }
     }, [user?.userId, status, navigate, dispatch, isLoggedIn, user, error]);
 

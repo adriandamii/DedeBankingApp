@@ -31,7 +31,7 @@ export const UserAccounts = () => {
     };
 
     return (
-        <div>
+        <div className='container'>
             <h1>Accounts for User ID: {userId}</h1>
             <GoBackRoute />
             {user?.userRole === "admin" &&

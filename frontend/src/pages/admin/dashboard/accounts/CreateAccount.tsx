@@ -40,6 +40,7 @@ const CreateAccount = () => {
                 />
                 <Button type="submit">Create Account</Button>
                 {status === 'loading' && <p>Creating account...</p>}
+                {status === 'succeeded' && <p>Account created!</p>}
                 {error && <p>{error}</p>}
             </form>
         </div>

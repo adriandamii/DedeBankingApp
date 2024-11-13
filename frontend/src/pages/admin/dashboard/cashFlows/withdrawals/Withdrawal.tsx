@@ -14,7 +14,8 @@ const Withdrawal = () => {
     };
    
     return (
-        <div>
+        <div className='container'>
+
             <h1>Withdrawal page</h1>
             <GoBackRoute />
             <h2>You are on uniqueAccountNumber {uniqueAccountNumber}</h2>

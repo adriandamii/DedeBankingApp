@@ -30,21 +30,34 @@ useEffect(() => {
            {status === 'loading' && <p>Loading...</p>}
            {status === 'failed' && <p>{error}</p>}
            {status === 'succeeded' && (
-               <ul>
-                   {cashFlows.map((cashFlow) => (
+               <table
+               className="transaction-table"
+               style={{ width: '100%', borderCollapse: 'collapse' }}
+           >
+               <thead>
+                   <tr>
+                       <th>ID</th>
+                       <th>Type</th>
+                       <th>Amount</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   {cashFlows.map((cashFlow, index) => (
                        <React.Fragment key={cashFlow.cashFlowId}>
                            <CashFlow
                                key={cashFlow.cashFlowId}
-                               cashFlowId={cashFlow.cashFlowId}
+                               cashFlowId={index + 1}
                                cashFlowAmount={cashFlow.cashFlowAmount}
                                cashFlowType={cashFlow.cashFlowType}
-                               uniqueAccountNumber={cashFlow.uniqueAccountNumber}
                            />
-                           <hr></hr>
                        </React.Fragment>
                    ))}
-               </ul>
-           )}
+               </tbody>
+           </table>
+       )}
+       {status === 'succeeded' && cashFlows.length === 0 && (
+           <p>No cash flow found.</p>
+       )}
     </div>
   )
 }

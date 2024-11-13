@@ -32,6 +32,7 @@ import ProtectedRoute from './features/protectedRoutes/ProtectedRoute';
 import Withdrawal from './pages/admin/dashboard/cashFlows/withdrawals/Withdrawal';
 import WithdrawalAction from './pages/admin/dashboard/cashFlows/withdrawals/WithdrawalAction';
 import WithdrawalHistory from './pages/admin/dashboard/cashFlows/withdrawals/WithdrawalHistory';
+import PageNotFound from './pages/PageNotFound';
 
 const router = createBrowserRouter([
   {
@@ -69,7 +70,9 @@ const router = createBrowserRouter([
       { path: "account/:uniqueAccountNumber/withdrawal/history", element: <ProtectedRoute element={<WithdrawalHistory />} /> },
       { path: "account/:uniqueAccountNumber/deposit", element: <ProtectedRoute element={<Deposit />} /> },
       { path: "account/:uniqueAccountNumber/deposit/action", element: <ProtectedRoute element={<DepositAction />} /> },
-      { path: "account/:uniqueAccountNumber/deposit/history", element: <ProtectedRoute element={<DepositHistory />} /> }
+      { path: "account/:uniqueAccountNumber/deposit/history", element: <ProtectedRoute element={<DepositHistory />} /> },
+      { path: "*", element: <PageNotFound /> },
+
     ],
   },
 ]);

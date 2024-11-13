@@ -8,10 +8,18 @@ interface RouteProps {
 }
 
 const ProtectedRoute: React.FC<RouteProps> = ({ element }) => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace/>;
+  }
+
+  if (user?.userRole === 'admin') {
+   // return <Navigate to='/users' replace/>;  
+  }
+  if (user?.userRole === 'customer') {
+    //return <Navigate to={`users/${user?.userId}`} replace/>;  
+
   }
 
   return element;

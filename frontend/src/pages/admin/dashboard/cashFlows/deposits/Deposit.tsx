@@ -14,7 +14,7 @@ const Deposit = () => {
         navigate(`/account/${uniqueAccountNumber}/Deposit/history`);
     };
     return (
-        <div>
+        <div className='container'>
             <h1>Deposit page</h1>
             <GoBackRoute />
             <h2>You are on uniqueAccountNumber {uniqueAccountNumber}</h2>

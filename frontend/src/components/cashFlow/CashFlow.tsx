@@ -4,21 +4,33 @@ import React from 'react';
 
 interface CashFlowProps {
     cashFlowId: number | undefined;
-    uniqueAccountNumber: number;
     cashFlowType: string;
     cashFlowAmount: number;
 }
 
-const CashFlow: React.FC<CashFlowProps> = ({ cashFlowId, uniqueAccountNumber, cashFlowType, cashFlowAmount }) => {
-   //const navigate = useNavigate();
-    const handleClick = () => {
-        //navigate(`/users/${userId}`); 
-    };
-
+const CashFlow: React.FC<CashFlowProps> = ({
+    cashFlowId,
+    cashFlowType,
+    cashFlowAmount,
+}) => {
     return (
-        <div className="user-container" onClick={handleClick} style={{ cursor: 'pointer' }}>
-            <p> {cashFlowId} {uniqueAccountNumber} {cashFlowType} {cashFlowAmount}</p>
-        </div>
+        <>
+            <tr
+                style={{
+                    backgroundColor:
+                        cashFlowType === 'deposit'
+                            ? '#edf9e8'
+                            : cashFlowType === 'withdrawal'
+                            ? '#f4dfde'
+                            : 'none',
+                }}
+            >
+                {' '}
+                <td>{cashFlowId}</td>
+                <td>{cashFlowType}</td>
+                <td>{cashFlowAmount}</td>
+            </tr>
+        </>
     );
 };
 

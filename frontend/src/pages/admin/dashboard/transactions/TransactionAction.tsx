@@ -30,11 +30,10 @@ const TransactionAction: React.FC = () => {
             createTransaction({
                 senderAccountNumber: uniqueAccountNumber!,
                 receiverAccountNumber: receiverAccount,
-                transactionAmount: parseFloat(amount),
+                transactionAmount: parseFloat(amount)
             })
         );
     };
-    console.log()
     return (
         <div className="login-container">
             <form className="login-form" onSubmit={handleTransaction}>
@@ -51,7 +50,7 @@ const TransactionAction: React.FC = () => {
                     }}
                 />
                 <TextField
-                    type="text"
+                    type="number"
                     value={receiverAccount}
                     onChange={(e) => setReceiverAccount(e.target.value)}
                     id="filled-basic"

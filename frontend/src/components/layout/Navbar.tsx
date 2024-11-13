@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
           to={"/users"}
           sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
         >
-          MyApp
+          Dede Banking App
         </Typography>
         <Box display="flex" alignItems="center">
           {isLoggedIn ? (

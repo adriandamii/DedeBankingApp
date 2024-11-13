@@ -40,7 +40,7 @@ const AccountDetails = () => {
     };
 
     return (
-        <>
+        <div className='container'>
             <h1>Account Details</h1>
             <GoBackRoute />
             <Button onClick={handleRouteTransaction} color="error">
@@ -65,7 +65,7 @@ const AccountDetails = () => {
                     <p>Unique Account Number: {account.uniqueAccountNumber}</p>
                 </div>
             )}
-        </>
+        </div>
     );
 };
 

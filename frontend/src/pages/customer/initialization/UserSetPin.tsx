@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../app/store';
 import { setUserPin } from '../../../features/users/usersSlice';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Button, TextField } from '@mui/material';
 
 
 const UserSetPin = () => {
@@ -25,15 +26,16 @@ const navigate = useNavigate();
 }, [status, navigate]);
 
   return (
-    <div>
+    <div className='container'>
+
       <h1>Set Your Pin</h1>
-      <input
+      <TextField
         type="password"
         value={pinNumber}
         onChange={(e) => setPinNumber(e.target.value)}
         placeholder="Enter your pin"
       />
-      <button onClick={handleSetPin}>Set Pin</button>
+      <Button onClick={handleSetPin}>Set Pin</Button>
       {status === 'loading' && <p>Processing...</p>}
       {status === 'failed' && <p>Error: {error}</p>}
       {status === 'succeeded' && <p>Pin set successfully!</p>}
